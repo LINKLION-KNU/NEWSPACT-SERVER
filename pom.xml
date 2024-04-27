@@ -8,11 +8,11 @@
         <version>3.2.0</version>
         <relativePath/>
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>org.likelion</groupId>
     <artifactId>springsecurity-study</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>springsecurity-study</name>
-    <description>springsecurity-study</description>
+    <name>NEWSFACT-SERVER</name>
+    <description>NEWSFACT-SERVER</description>
     <properties>
         <java.version>17</java.version>
     </properties>
