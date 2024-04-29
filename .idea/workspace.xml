@@ -5,12 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3d91a71c-f2f4-42b3-af1f-d3590e073544" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/company/domain/MediaCompany.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/company/repository/MediaCompanyRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/domain/enums/loginType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/keyword/domain/TrendKeyword.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/keyword/repository/TrendKeywordRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/domain/News.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/repository/NewsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -30,20 +47,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/sonmingi/Desktop/Project/NEWSFACT-SERVER&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;614dfae0b097ab07d1373f661f766fb9&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "feat__HandMK__entity",
+    "last_opened_file_path": "/Users/sonmingi/Desktop/Project/NEWSFACT-SERVER",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "spring.configuration.checksum": "614dfae0b097ab07d1373f661f766fb9",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="NewsFactBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="springsecurity-study" />
@@ -67,7 +88,7 @@
       <workItem from="1714309762787" duration="1256000" />
       <workItem from="1714399631107" duration="478000" />
       <workItem from="1714400122808" duration="41000" />
-      <workItem from="1714400239975" duration="31000" />
+      <workItem from="1714400239975" duration="1442000" />
     </task>
     <servers />
   </component>
