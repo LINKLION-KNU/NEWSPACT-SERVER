@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        log.info("[JwtAuthenticationFilter] should not filter url : {}",request.getServletPath());
         return passUrl.stream().anyMatch(url -> new AntPathMatcher().match(url, request.getServletPath()));
     }
     @Override

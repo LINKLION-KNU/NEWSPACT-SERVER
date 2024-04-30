@@ -5,11 +5,11 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.likelion.newsfactbackend.user.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Value("${jwt.secret}")
     private String key;
@@ -33,20 +33,22 @@ public class JwtTokenProvider {
     public String createAccessToken(String email, List<String> roles){
         log.info("[JwtTokenProvider] create access token");
         String token =  createToken(email, roles, accessTokenValidTime);
+        token = "Bearer " + token;
         log.info("[JwtTokenProvider] create access token success");
         return token;
     }
 
     public String createRefreshToken(String email){
-        log.info("[JwtTokenProvider] create refresh token");
+        log.info("[JwtTokenProvider] create refresh token : {}", email);
         String token =  createToken(email, new ArrayList<>(), refreshTokenValidTime);
+        token = "Bearer " + token;
         log.info("[JwtTokenProvider] create refresh token success");
         return token;
     }
 
     private String createToken(String email, List<String> roles, long validTime){
         log.info("[JwtTokenProvider] create token");
-        Claims claims = Jwts.claims().setSubject(email);
+        Claims claims = Jwts.claims().setAudience(email);
         claims.put("roles", roles);
 
         Date now = new Date();
@@ -68,19 +70,25 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token){
         log.info("[JwtTokenProvider] check authentication");
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserEmail(token));
-        log.info("[JwtTokenProvider] check authentication success");
-        return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
+        try{
+            UserDetails userDetails = userDetailsService.loadUserByUsername(getUserEmail(token));
+            log.info("[JwtTokenProvider] check authentication success");
+            return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
+        }catch (RuntimeException e) {
+            log.error("[JwtTokenProvider] can't not found user" + e);
+        }
+        return null;
     }
 
     public String getUserEmail(String token){
         log.info("[JwtTokenProvider] check user email");
         String info = Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(key.getBytes())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .getSubject();
+                .getAudience();
+        log.info("[JwtTokenProvider] getUserEmail user info : {}" ,info);
         log.info("[JwtTokenProvider] check user email success");
         return info;
     }
@@ -101,16 +109,22 @@ public class JwtTokenProvider {
 
     public String extractToken(HttpServletRequest request){
         log.info("[JwtTokenProvider] extract token from header");
-        return request.getHeader("X-AUTH-TOKEN");
+        String token = request.getHeader("Authorization");
+        if(!token.isEmpty()){
+            token = token.replace("Bearer ","").trim();
+        }
+        return token;
     }
 
     public boolean validateToken(String token){
         log.warn("[JwtTokenProvider] validate token");
 
         try{
-            Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(key.getBytes()).build().parseClaimsJws(token);
+            log.info("JwtTokenProvider / validateToken(): 토큰 유효 체크 완료");
             return !claimsJws.getBody().getExpiration().before(new Date());
         }catch (Exception e){
+            log.error("Token validation error",e);
             log.info("[JwtTokenProvider] token is invalid");
             return false;
         }
