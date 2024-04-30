@@ -25,7 +25,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         Object errorObj = request.getAttribute("error");
-        ResultCode result = errorObj instanceof ResultCode ? (ResultCode) errorObj : ResultCode.EXPIRED_TOKEN;
+        ResultCode result = errorObj instanceof ResultCode ? (ResultCode) errorObj : ResultCode.UNAUTHORIZED;
 
         String token = request.getHeader("Authorization");
 
