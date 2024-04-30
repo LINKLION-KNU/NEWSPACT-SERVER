@@ -3,6 +3,7 @@ package org.likelion.newsfactbackend.news.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.likelion.newsfactbackend.global.domain.BaseTimeEntity;
+import org.likelion.newsfactbackend.keyword.domain.TrendKeyword;
 
 @Getter
 @Setter
@@ -37,4 +38,9 @@ public class News extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String date;
+
+    @ManyToOne
+    @JoinColumn(name = "trendKeyword_id")
+    private TrendKeyword trendKeyword;
+
 }
