@@ -51,7 +51,7 @@ public class SecurityConfiguration {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
-                .authorizeHttpRequests(reqeust -> reqeust
+                .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(PATTERNS).permitAll()
                         .requestMatchers("/api/v1/**").hasRole("USER")
