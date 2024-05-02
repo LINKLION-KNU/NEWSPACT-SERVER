@@ -1,14 +1,15 @@
-package org.likelion.newsfactbackend.news.chosun.dto.response;
+package org.likelion.newsfactbackend.news.yna.dto.response;
 
 import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@Builder
-public class ChosunNewsResponseDto {
+public class YnaNewsResponseDto {
+
     private String company;
     private String title;
     private String date;
