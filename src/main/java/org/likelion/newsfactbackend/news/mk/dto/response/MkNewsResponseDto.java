@@ -1,4 +1,4 @@
-package org.likelion.newsfactbackend.news.chosun.dto.response;
+package org.likelion.newsfactbackend.news.mk.dto.response;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class ChosunNewsResponseDto {
+public class MkNewsResponseDto {
     private String company;
     private String title;
     private String date;
@@ -17,5 +17,5 @@ public class ChosunNewsResponseDto {
     private String writer;
     private String writerEmail;
     private String keyword;
-
 }
+
