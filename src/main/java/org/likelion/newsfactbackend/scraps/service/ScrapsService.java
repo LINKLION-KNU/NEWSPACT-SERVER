@@ -1,8 +1,8 @@
 package org.likelion.newsfactbackend.scraps.service;
 
-import org.likelion.newsfactbackend.scraps.dto.request.ScrapsNewsRequestDto;
-import org.likelion.newsfactbackend.scraps.dto.response.ScrapsNewsResponseDto;
+import org.likelion.newsfactbackend.scraps.dto.request.ScrapsRequestDto;
+import org.likelion.newsfactbackend.scraps.dto.response.ScrapsResponseDto;
 
 public interface ScrapsService {
-    ScrapsNewsResponseDto getScrapsNews(ScrapsNewsRequestDto scrapsNewsRequestDto);
+    ScrapsResponseDto getScrapsNews(ScrapsRequestDto scrapsRequestDto);
 }

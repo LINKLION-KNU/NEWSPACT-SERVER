@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class ScrapsNewsRequestDto {
+public class ScrapsRequestDto {
     private String company;
     private String title;
     private String date;
