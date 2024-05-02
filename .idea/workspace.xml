@@ -36,6 +36,7 @@
         <option value="package-info" />
         <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -106,7 +107,7 @@
       <workItem from="1714399631107" duration="478000" />
       <workItem from="1714400122808" duration="41000" />
       <workItem from="1714400239975" duration="1442000" />
-      <workItem from="1714620405392" duration="2614000" />
+      <workItem from="1714620405392" duration="7126000" />
     </task>
     <servers />
   </component>
