@@ -5,10 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3d91a71c-f2f4-42b3-af1f-d3590e073544" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/dto/request/ChosunNewsRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/dto/response/ChosunNewsResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/service/ChosunNewsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/service/impl/ChosunNewsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/deletescraps/dto/request/DeleteScrapsRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/deletescraps/dto/response/DeleteScrapsResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/deletescraps/service/DeleteScrapsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/Hankyung/dto/request/HangkyungNewsRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/Hankyung/dto/response/HankyungNewsResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/Hankyung/service/HanKyungNewsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/Hankyung/service/impl/HanKyungNewsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/joongang/dto/request/JoongangNewsRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/joongang/dto/response/JoongangNewsResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/joongang/service/JoongangNewsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/joongang/service/impl/JoongangNewsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/khan/dto/request/KhanNewsRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/khan/dto/response/KhanNewsResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/khan/service/KhanNewsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/khan/service/impl/KhanNewsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/mt/dto/request/MtNewsRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/mt/dto/response/MtNewsResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/mt/service/MtNewsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/mt/service/impl/MtNewsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/dto/request/ScrapsNewsRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/dto/response/ScrapsNewsResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/service/ScrapsService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -20,8 +38,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -30,6 +48,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 2
@@ -92,7 +113,7 @@
       <workItem from="1714399631107" duration="478000" />
       <workItem from="1714400122808" duration="41000" />
       <workItem from="1714400239975" duration="1442000" />
-      <workItem from="1714620405392" duration="2614000" />
+      <workItem from="1714620405392" duration="6795000" />
     </task>
     <servers />
   </component>
