@@ -5,24 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3d91a71c-f2f4-42b3-af1f-d3590e073544" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/keywords/dto/response/KeywordsResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/edaily/dto/request/EdailyNewsRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/edaily/dto/response/EdailyNewsResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/mk/dto/request/MkNewsRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/mk/dto/response/MkNewsResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/mk/service/MkNewsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/mk/service/impl/MkNewsServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/newsis/dto/request/NewsisNewsRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/newsis/dto/response/NewsisNewsResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/yna/dto/request/YnaNewsRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/yna/dto/response/YnaNewsResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/dto/request/ScrapsNewsRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/dto/response/ScrapsNewsResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/edaily/service/EdailyNewsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/edaily/service/impl/EdailyNewsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/newsis/service/NewsisNewsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/newsis/service/impl/NewsisNewsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/yna/service/YnaNewsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/yna/service/impl/YnaNewsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/service/ScrapsNewsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/service/impl/ScrapsNewsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/service/impl/ScrapsServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/keyword/domain/TrendKeyword.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/keyword/repository/TrendKeywordRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/dto/response/ChosunNewsResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/dto/response/ChosunNewsResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/service/ScrapsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/service/ScrapsService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,10 +26,10 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
+        <option value="Interface" />
         <option value="package-info" />
         <option value="Interface" />
         <option value="Class" />
-        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -55,26 +48,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "Feature__Haeyoon__Dto",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/minjae/Documents/likelion-project/NEWSFACT-SERVER",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "spring.configuration.checksum": "614dfae0b097ab07d1373f661f766fb9",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Feature__Haeyoon__Dto&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/minjae/Documents/likelion-project/NEWSFACT-SERVER&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;614dfae0b097ab07d1373f661f766fb9&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="NewsFactBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="springsecurity-study" />
@@ -107,7 +100,7 @@
       <workItem from="1714399631107" duration="478000" />
       <workItem from="1714400122808" duration="41000" />
       <workItem from="1714400239975" duration="1442000" />
-      <workItem from="1714620405392" duration="7126000" />
+      <workItem from="1714620405392" duration="10838000" />
     </task>
     <servers />
   </component>
