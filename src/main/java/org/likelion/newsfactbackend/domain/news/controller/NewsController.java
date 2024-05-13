@@ -21,6 +21,6 @@ public class NewsController {
 
         newsService.getNews(requestNewsDto);
 
-        return ResponseEntity.
+        return null;
     }
 }
