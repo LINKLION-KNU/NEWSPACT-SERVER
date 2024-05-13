@@ -1,4 +1,4 @@
-package org.likelion.newsfactbackend.scraps.dto.request;
+package org.likelion.newsfactbackend.domain.scraps.dto.request;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class ScrapsRequestDto {
+public class RequestSaveScrapsDto {
     private String company;
     private String title;
     private String date;
