@@ -1,5 +1,6 @@
 package org.likelion.newsfactbackend.news.chosun.service.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.likelion.newsfactbackend.news.chosun.dto.request.ChosunNewsRequestDto;
