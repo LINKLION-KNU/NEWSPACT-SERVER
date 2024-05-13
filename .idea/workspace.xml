@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3d91a71c-f2f4-42b3-af1f-d3590e073544" name="Changes" comment="">
+<<<<<<< Updated upstream
       <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/edaily/service/EdailyNewsService.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/edaily/service/impl/EdailyNewsServiceImpl.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/newsis/service/NewsisNewsService.java" afterDir="false" />
@@ -16,6 +17,12 @@
       <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/service/impl/ScrapsServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/service/ScrapsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/scraps/service/ScrapsService.java" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/controller/ChosunController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/service/ChosunNewsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/service/ChosunNewsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/service/impl/ChosunNewsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/news/chosun/service/impl/ChosunNewsServiceImpl.java" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +36,10 @@
         <option value="Interface" />
         <option value="package-info" />
         <option value="Interface" />
+<<<<<<< Updated upstream
+=======
+        <option value="Interface" />
+>>>>>>> Stashed changes
         <option value="Class" />
       </list>
     </option>
@@ -55,8 +66,14 @@
     &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
     &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+<<<<<<< Updated upstream
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;Feature__Haeyoon__Dto&quot;,
+=======
+    &quot;Spring Boot.NewsFactBackendApplication.executor&quot;: &quot;Run&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+>>>>>>> Stashed changes
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/minjae/Documents/likelion-project/NEWSFACT-SERVER&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -80,8 +97,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="jdk-19.0.2-corretto-19.0.2-4caba194b151-be841094" />
-        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-322ed176" />
+        <option value="jdk-19.0.2-corretto-19.0.2-3183f394aec4-a73a9aee" />
       </set>
     </attachedChunks>
   </component>
@@ -100,7 +116,12 @@
       <workItem from="1714399631107" duration="478000" />
       <workItem from="1714400122808" duration="41000" />
       <workItem from="1714400239975" duration="1442000" />
+<<<<<<< Updated upstream
       <workItem from="1714620405392" duration="10838000" />
+=======
+      <workItem from="1714620405392" duration="7126000" />
+      <workItem from="1715592140095" duration="722000" />
+>>>>>>> Stashed changes
     </task>
     <servers />
   </component>
