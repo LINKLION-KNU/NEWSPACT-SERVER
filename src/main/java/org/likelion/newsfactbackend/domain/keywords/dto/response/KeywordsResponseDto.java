@@ -1,4 +1,4 @@
-package org.likelion.newsfactbackend.keywords.dto.response;
+package org.likelion.newsfactbackend.domain.keywords.dto.response;
 
 
 import lombok.*;
