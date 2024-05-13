@@ -1,4 +1,4 @@
-package org.likelion.newsfactbackend.keyword.domain;
+package org.likelion.newsfactbackend.domain.keywords.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

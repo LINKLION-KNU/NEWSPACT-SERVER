@@ -1,4 +1,4 @@
-package org.likelion.newsfactbackend.scraps.dto.response;
+package org.likelion.newsfactbackend.domain.scraps.dto.response;
 
 
 import lombok.*;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScrapsNewsResponseDto {
+public class ResponseScrapsNewsDto {
     private String company;
     private String title;
     private String date;
