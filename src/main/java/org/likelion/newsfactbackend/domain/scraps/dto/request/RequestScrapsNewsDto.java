@@ -1,4 +1,4 @@
-package org.likelion.newsfactbackend.scraps.dto.request;
+package org.likelion.newsfactbackend.domain.scraps.dto.request;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScrapsNewsRequestDto {
+public class RequestScrapsNewsDto {
     private String page;
     private String size;
 }
