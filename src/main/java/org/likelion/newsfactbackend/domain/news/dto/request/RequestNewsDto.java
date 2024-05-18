@@ -1,6 +1,8 @@
 package org.likelion.newsfactbackend.domain.news.dto.request;
 
 import lombok.*;
+import org.likelion.newsfactbackend.domain.news.dto.Company;
+import org.likelion.newsfactbackend.domain.news.dto.Keyword;
 
 @Getter
 @Setter
@@ -9,6 +11,6 @@ import lombok.*;
 @ToString
 @Builder
 public class RequestNewsDto {
-    private String keyWord;
-    private String company;
+    private Keyword keyword;
+    private Company company;
 }
