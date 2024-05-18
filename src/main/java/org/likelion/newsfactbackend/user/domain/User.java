@@ -36,9 +36,6 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String userName;
 
     @Column(nullable = false, unique = true)
-    private String nickName;
-
-    @Column(nullable = false, unique = true)
     private String password;
 
     @Column(nullable = false, unique = true)
@@ -70,7 +67,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.userName;
     }
 
     @Override

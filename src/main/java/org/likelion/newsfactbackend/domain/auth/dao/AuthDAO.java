@@ -1,8 +1,9 @@
 package org.likelion.newsfactbackend.domain.auth.dao;
 
+import org.likelion.newsfactbackend.domain.auth.dto.request.RequestSignUpDto;
+import org.springframework.http.ResponseEntity;
 
-import org.likelion.newsfactbackend.user.domain.User;
 
 public interface AuthDAO {
-    void createUser(User user);
+    ResponseEntity<?> signIn(RequestSignUpDto requestSignUpDto);
 }

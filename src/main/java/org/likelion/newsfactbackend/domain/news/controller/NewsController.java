@@ -1,7 +1,6 @@
 package org.likelion.newsfactbackend.domain.news.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.likelion.newsfactbackend.domain.auth.dto.request.SignInRequestDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
