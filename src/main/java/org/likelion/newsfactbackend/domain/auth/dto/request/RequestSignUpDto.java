@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class SignUpRequestDto {
+public class RequestSignUpDto {
     private String userName;
     private String nickName;
     private String password;

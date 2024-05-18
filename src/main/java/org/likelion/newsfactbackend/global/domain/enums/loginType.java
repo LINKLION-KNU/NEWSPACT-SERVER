@@ -1,6 +1,6 @@
 package org.likelion.newsfactbackend.global.domain.enums;
 
-public enum loginType {
+public enum LoginType {
     KAKAO,
     APPLE,
     GOOGLE

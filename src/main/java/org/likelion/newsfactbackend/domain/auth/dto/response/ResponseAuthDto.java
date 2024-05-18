@@ -10,8 +10,9 @@ import org.likelion.newsfactbackend.global.domain.CommonResponse;
 @AllArgsConstructor
 @ToString
 @Builder
-public class AuthResponseDto {
+public class ResponseAuthDto {
     private String accessToken;
     private String refreshToken;
+    private String name;
     private CommonResponse<?> status;
 }
