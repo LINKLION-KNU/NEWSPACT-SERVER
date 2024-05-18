@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class SignInRequestDto {
+public class RequestSignInDto {
     private String email;
     private String password;
 }
