@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KeywordsResponseDto {
+public class ResponseKeywordsDto {
     private String rank;
     private String keyword;
     private String count;
