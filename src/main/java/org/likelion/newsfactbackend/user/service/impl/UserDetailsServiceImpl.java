@@ -1,4 +1,4 @@
-package org.likelion.newsfactbackend.user.service;
+package org.likelion.newsfactbackend.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
