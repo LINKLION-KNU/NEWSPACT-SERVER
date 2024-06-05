@@ -4,5 +4,5 @@ import org.likelion.newsfactbackend.user.domain.User;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-    User findByUser(Long id);
+    User findByUser(String email);
 }
