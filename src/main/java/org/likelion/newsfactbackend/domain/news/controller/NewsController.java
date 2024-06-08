@@ -2,6 +2,8 @@ package org.likelion.newsfactbackend.domain.news.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
+import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
+import org.likelion.newsfactbackend.domain.news.repository.NewsRepository;
 import org.likelion.newsfactbackend.domain.news.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,13 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class NewsController {
 
-    @Autowired
-    NewsService newsService;
-
+    private final NewsService newsService;
 
 
     @GetMapping("")
-    public ResponseEntity<?> sighIn(RequestNewsDto requestNewsDto){
+    public ResponseEntity<?> getNews(@RequestParam RequestNewsDto requestNewsDto){
 
          /*
     1. 예외처리
@@ -34,13 +34,12 @@ public class NewsController {
         if (!(requestNewsDto.getCompany().isCompany())){
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("없는 값 입니다. 다시 입력해주세요.");
         }
-        //객체 지향
-        //DDD -> 객체지향을 극한으로 사용해서, 깔끔한 코드를 만든다
+
         if (!requestNewsDto.getKeyword().isOver()){
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("검색어가 너무 깁니다. 다시 입력해주세요.");
         }
-        newsService.getNews(requestNewsDto);
+        ResponseNewsDto news = newsService.getNews(requestNewsDto);
 
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(news);
     }
 }

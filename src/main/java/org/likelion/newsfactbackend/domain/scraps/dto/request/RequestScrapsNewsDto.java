@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestScrapsNewsDto {
-    private String page;
-    private String size;
+    private Integer page;
+    private Integer size;
 }
