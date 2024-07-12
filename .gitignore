@@ -8,19 +8,17 @@ target/
 ### STS ###
 .apt_generated
 .classpath
-.factorypath
+.factorypathd
 .project
 .settings
 .springBeans
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea/
-.idea/workspace.xml
+.idea
 *.iws
 *.iml
 *.ipr
-*.xml
 
 ### NetBeans ###
 /nbproject/private/
