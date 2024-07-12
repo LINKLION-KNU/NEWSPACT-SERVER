@@ -8,13 +8,13 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class RequestSignUpDto {
-    private String userName;
+public class RequestSaveUserDto {
+    private String name;
     private String nickName;
     private String password;
-    private String phoneNumber;
     private String email;
     private String profileUrl;
     private String loginType;
-    private Boolean useAble;
+    private boolean useAble;
 }
+

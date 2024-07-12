@@ -1,9 +1,6 @@
 package org.likelion.newsfactbackend.domain.scraps.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -12,6 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
+@Entity
+@Table
 public class Scraps {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
