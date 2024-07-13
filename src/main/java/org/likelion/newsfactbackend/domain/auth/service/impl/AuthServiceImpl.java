@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.likelion.newsfactbackend.domain.auth.dao.AuthDAO;
-import org.likelion.newsfactbackend.domain.auth.dto.request.RequestSignUpDto;
+import org.likelion.newsfactbackend.domain.auth.dto.request.RequestSaveUserDto;
 import org.likelion.newsfactbackend.domain.auth.service.AuthService;
 
 import org.likelion.newsfactbackend.global.domain.CommonResponse;
@@ -29,54 +29,136 @@ import java.util.Map;
 public class AuthServiceImpl implements AuthService {
     private final AuthDAO authDAO;
 
-    private final String kakaoAccessTokenUrl = "https://kauth.kakao.com/oauth/token";
-    private final String kakaoUserInfoUrl = "https://kapi.kakao.com/v2/user/me";
-
+    @Value("${google.accesstoken.url}")
+    private String googleAccessTokenUrl;
+    @Value("${google.client.id}")
+    private String googleClientId;
+    @Value("${google.client.secret}")
+    private String googleClientSecret;
+    @Value("${google.redirect.uri}")
+    private String googleRedirectUri;
+    @Value("${google.userinfo.uri}")
+    private String googleUserInfoUri;
     @Value("${kakao.client.id}")
-    private String clientKey;
+    private String kakaoClientKey;
     @Value("${kakao.redirect.url}")
-    private String redirectUrl;
+    private String kakaoRedirectUrl;
+    @Value("${kakao.accesstoken.url}")
+    private String kakaoAccessTokenUrl;
+    @Value("${kakao.userinfo.url}")
+    private String kakaoUserInfoUrl;
 
     @Override
-    public ResponseEntity<?> kakaoLogin(String authorizeCode) {
-        log.info("[kakao login] issue a authorizecode");
-        ObjectMapper objectMapper = new ObjectMapper();
+    public ResponseEntity<?> signIn(String authorizeCode, String type) {
+        switch (type){
+            case "KAKAO":
+                log.info("[kakao login] issue a authorizecode");
+                ObjectMapper objectMapper = new ObjectMapper();
+                RestTemplate restTemplate = new RestTemplate();
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+                MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+                params.add("grant_type", "authorization_code");
+                params.add("client_id", kakaoClientKey);
+                params.add("redirect_uri", kakaoRedirectUrl);
+                params.add("code", authorizeCode);
+
+                HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+
+                try{
+                    ResponseEntity<String> response = restTemplate.exchange(
+                            kakaoAccessTokenUrl,
+                            HttpMethod.POST,
+                            kakaoTokenRequest,
+                            String.class
+                    );
+                    log.info("[kakao login] authorizecode issued successfully");
+                    Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+                    String accessToken = (String) responseMap.get("access_token");
+
+                    RequestSaveUserDto requestSignUpDto = getKakaoUserInfo(accessToken);
+
+                    log.info("[kakao login] dto : {}", requestSignUpDto.toString());
+
+                    return authDAO.login(requestSignUpDto);
+
+                }catch (Exception e){
+                    log.warn("[kakao login] fail authorizecode issued");
+                    return ResponseEntity.status(ResultCode.PASSWORD_NOT_MATCH.getCode())
+                            .body(CommonResponse.fail(ResultCode.PASSWORD_NOT_MATCH));
+                }
+
+            case "GOOGLE":
+                log.info("[google login] issue a authorizecode");
+                objectMapper = new ObjectMapper();
+                restTemplate = new RestTemplate();
+                headers = new HttpHeaders();
+
+                headers.add("Content-type", "application/x-www-form-urlencoded");
+
+                params = new LinkedMultiValueMap<>();
+                params.add("code", authorizeCode);
+                params.add("client_id", googleClientId);
+                params.add("client_secret", googleClientSecret);
+                params.add("redirect_uri", googleRedirectUri);
+                params.add("grant_type", "authorization_code");
+
+                HttpEntity<MultiValueMap<String, String>> googleRequest = new HttpEntity<>(params, headers);
+
+                ResponseEntity<String> response = restTemplate.postForEntity(googleAccessTokenUrl,googleRequest,String.class);
+                log.info("[google login] authorizecode issued successfully");
+                try{
+                    Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+                    String accessToken = (String) responseMap.get("access_token");
+                    log.info("[google login] access token issued successfully");
+                    log.info("[google login] accessToken : {}",accessToken);
+
+                    log.warn("[google login] get user info");
+                    RequestSaveUserDto requestSignUpDto = getGoogleUserInfo(accessToken);
+
+                    return authDAO.login(requestSignUpDto);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    log.warn("[google login] fail to issue authorizecode");
+                    return ResponseEntity.status(ResultCode.PASSWORD_NOT_MATCH.getCode())
+                            .body(CommonResponse.fail(ResultCode.PASSWORD_NOT_MATCH));
+                }
+        }
+        return null;
+    }
+
+    private RequestSaveUserDto getGoogleUserInfo(String accessToken){
         RestTemplate restTemplate = new RestTemplate();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        ObjectMapper mapper = new ObjectMapper();
+        headers.add("Authorization","Bearer " + accessToken);
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", clientKey);
-        params.add("redirect_uri", redirectUrl);
-        params.add("code", authorizeCode);
-
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
-
+        HttpEntity<MultiValueMap<String, String>> userInfoRequest = new HttpEntity<>(headers);
+        ResponseEntity<String> userInfoResponse = restTemplate.exchange(googleUserInfoUri,HttpMethod.GET,userInfoRequest,String.class);
+        log.info("[google user info] : {}",userInfoResponse.toString());
         try{
-            ResponseEntity<String> response = restTemplate.exchange(
-                    kakaoAccessTokenUrl,
-                    HttpMethod.POST,
-                    kakaoTokenRequest,
-                    String.class
-            );
-            log.info("[kakao login] authorizecode issued successfully");
-            Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
-            String accessToken = (String) responseMap.get("access_token");
+            Map<String, Object> responseMap = mapper.readValue(userInfoResponse.getBody(), new TypeReference<Map<String, Object>>() {});
 
-            RequestSignUpDto requestSignUpDto = getKakaoUserInfo(accessToken);
+            RequestSaveUserDto requestSignUpDto = RequestSaveUserDto.builder()
+                    .name((String) responseMap.get("name"))
+                    .nickName(null)
+                    .password(getRandomPassword())
+                    .email((String)responseMap.get("email"))
+                    .profileUrl((String) responseMap.get("picture"))
+                    .loginType(LoginType.GOOGLE.toString())
+                    .useAble(true)
+                    .build();
 
-            return authDAO.signIn(requestSignUpDto);
-
+            return requestSignUpDto;
         }catch (Exception e){
-            log.warn("[kakao login] fail authorizecode issued");
-            return ResponseEntity.status(ResultCode.PASSWORD_NOT_MATCH.getCode())
-                    .body(CommonResponse.fail(ResultCode.PASSWORD_NOT_MATCH));
+            e.printStackTrace();
+            return null;
         }
     }
 
-    private RequestSignUpDto getKakaoUserInfo(String accessToken){
+    private RequestSaveUserDto getKakaoUserInfo(String accessToken){
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         ObjectMapper mapper = new ObjectMapper();
@@ -96,11 +178,10 @@ public class AuthServiceImpl implements AuthService {
             Map<String, Object> kakaoAccount = (Map<String, Object>) responseMap.get("kakao_account");
             Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
 
-            RequestSignUpDto requestSignUpDto = RequestSignUpDto.builder()
-                    .userName((String) kakaoAccount.get("name"))
-                    .nickName((String) kakaoAccount.get("nickname"))
+            RequestSaveUserDto requestSignUpDto = RequestSaveUserDto.builder()
+                    .name((String) profile.get("nickname"))
+                    .nickName(null)
                     .password(getRandomPassword())
-                    .phoneNumber((String) kakaoAccount.get("phone_number"))
                     .email((String)kakaoAccount.get("email"))
                     .profileUrl((String) profile.get("profile_image_url"))
                     .loginType(LoginType.KAKAO.toString())
