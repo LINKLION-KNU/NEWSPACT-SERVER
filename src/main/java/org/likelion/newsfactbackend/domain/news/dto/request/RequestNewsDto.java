@@ -7,6 +7,8 @@ import org.likelion.newsfactbackend.domain.news.dto.Keyword;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Builder
 public class RequestNewsDto {
     private Keyword keyword;
