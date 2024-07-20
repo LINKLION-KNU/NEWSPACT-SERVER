@@ -5,20 +5,91 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c38e48fe-ffe1-41c0-af4f-65f1d01fe6de" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/repository/NewsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/repository/NewsRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/controller/ControllerExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/request/PageRequestNewsDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/exception/ErrorMessage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/exception/NewsException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/likelion/newsfactbackend/domain/news/dto/response/ResponseNewsDtoTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/controller/NewsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/controller/NewsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/Keyword.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/Keyword.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/request/RequestNewsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/request/RequestNewsDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/response/ResponseNewsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/response/ResponseNewsDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/NewsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/NewsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/impl/NewsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/impl/NewsServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="JUnit5 Test Class" />
+      </list>
+    </option>
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JUnit.ResponseNewsDtoTest.testValidateFieldsWithEmptyCompany.executor": "Run",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "git-widget-placeholder": "feat32__create__pageable",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.likelion.newsfactbackend.domain.news.controller" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.likelion.newsfactbackend.domain.news.dto.response" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.ResponseNewsDtoTest.testValidateFieldsWithEmptyCompany">
+    <configuration name="ResponseNewsDtoTest.testValidateFieldsWithEmptyCompany" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="springsecurity-study" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.likelion.newsfactbackend.domain.news.dto.response.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.likelion.newsfactbackend.domain.news.dto.response" />
+      <option name="MAIN_CLASS_NAME" value="org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDtoTest" />
+      <option name="METHOD_NAME" value="testValidateFieldsWithEmptyCompany" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NewsFactBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="springsecurity-study" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.likelion.newsfactbackend.NewsFactBackendApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.ResponseNewsDtoTest.testValidateFieldsWithEmptyCompany" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <created>1721449331415</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1721449331415</updated>
+      <workItem from="1721449333468" duration="15096000" />
+    </task>
     <servers />
   </component>
 </project>
