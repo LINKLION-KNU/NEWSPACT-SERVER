@@ -9,12 +9,12 @@ import lombok.*;
 @ToString
 @Builder
 public class ResponseNewsDto {
+    private String companyLogo;
     private String company;
     private String title;
-    private String date;
-    private String img;
-    private String content;
-    private String writer;
-    private String writerEmail;
-    private String keyword;
+    private String subTitle; // 내용
+    private String thumbnail; // 썸네일
+    private String publishDate;
+    private String newsUrl;
+
 }
