@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class Keyword {
-    String keywordName;
+    public String keywordName;
 
     public Boolean isOver() {
         return keywordName.length() < 255;
