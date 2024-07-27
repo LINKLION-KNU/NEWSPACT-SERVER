@@ -15,8 +15,7 @@ public class PageRequestNewsDto {
         this.size = size;
         this.keyword = keyword;
     }
-
     public boolean isOverSize(Long size) {
-        return size < 14;
+        return size > 14;
     }
 }

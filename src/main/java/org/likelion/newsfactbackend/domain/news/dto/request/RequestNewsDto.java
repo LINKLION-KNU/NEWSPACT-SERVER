@@ -7,12 +7,12 @@ import org.likelion.newsfactbackend.domain.news.dto.Keyword;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Builder
 public class RequestNewsDto {
     private Keyword keyword;
     private Company company;
+
     public RequestNewsDto(Keyword keyword, Company company) {
         this.keyword = keyword;
         this.company = company;
