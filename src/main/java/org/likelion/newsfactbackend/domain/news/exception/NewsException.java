@@ -1,16 +1,19 @@
 package org.likelion.newsfactbackend.domain.news.exception;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class NewsException extends NullPointerException {
-    private String field;
-    private String message;
+public class NewsException extends RuntimeException {
+
+    private final ErrorCode error;
+    private final int errorCode;
+    private final String errorMessage;
+
+
+    public NewsException(ErrorCode error) {
+        super(error.getErrorMessage());
+        this.error = error;
+        this.errorCode = error.getStateCode();
+        this.errorMessage = error.getErrorMessage();
+    }
 }

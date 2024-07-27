@@ -7,7 +7,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import lombok.extern.slf4j.Slf4j;
 import org.likelion.newsfactbackend.domain.news.dto.request.PageRequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
@@ -69,7 +68,6 @@ public class NewsServiceImpl implements NewsService {
         }
     }
 
-    @Override
     public ResponseNewsDto getNews(RequestNewsDto requestNewsDto) {
         return new ResponseNewsDto();
     }
@@ -144,9 +142,9 @@ public class NewsServiceImpl implements NewsService {
         return articles;
     }
     @Override
-    public Page<ResponseNewsDto> searchNews(RequestNewsDto newsRequestDto) throws IOException {
-        List<ResponseNewsDto> allArticles = fetchNewsArticles(newsRequestDto.getKeyword());
-        Pageable pageable = PageRequest.of(0, newsRequestDto.getSize().intValue());
+    public Page<ResponseNewsDto> searchNews(PageRequestNewsDto pageRequestNewsDto) throws IOException {
+        List<ResponseNewsDto> allArticles = fetchNewsArticles(pageRequestNewsDto.getKeyword());
+        Pageable pageable = PageRequest.of(0, pageRequestNewsDto.getSize().intValue());
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), allArticles.size());
@@ -156,7 +154,7 @@ public class NewsServiceImpl implements NewsService {
         return new PageImpl<>(pagedArticles, pageable, allArticles.size());
     }
 
-    private ResponseNewsDto fetchNewsArticleDetails(String url, String oid) throws IOException {
+    public ResponseNewsDto fetchNewsArticleDetails(String url, String oid) throws IOException {
         Document doc = null;
         for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
             try {

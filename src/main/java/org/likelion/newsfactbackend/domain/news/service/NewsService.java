@@ -12,10 +12,10 @@ import java.util.List;
 
 @Service
 public interface NewsService {
+
     List<ResponseNewsDto> fetchAllNewsArticles(String search) throws IOException;
     List<ResponseNewsDto> fetchNewsArticles(String search) throws IOException;
-    Page<ResponseNewsDto> searchNews(RequestNewsDto requestNewsDto) throws IOException;
-    ResponseNewsDto getNews(RequestNewsDto chosunNewsRequestDto);
-     Page<ResponseNewsDto> searchNews(PageRequestNewsDto pageRequestNewsDto);
-
+    Page<ResponseNewsDto> searchNews(PageRequestNewsDto pageRequestNewsDto) throws IOException;
+    ResponseNewsDto fetchNewsArticleDetails(String url, String oid) throws IOException;
+    ResponseNewsDto getNews(RequestNewsDto requestNewsDto);
 }
