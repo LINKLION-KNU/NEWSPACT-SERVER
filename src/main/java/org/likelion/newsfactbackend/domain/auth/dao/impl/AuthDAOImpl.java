@@ -29,7 +29,9 @@ public class AuthDAOImpl implements AuthDAO {
 
     @Override
     public ResponseEntity<?> login(RequestSaveUserDto requestSaveUserDto) {
+        log.info("[sign up] requestsavedto : {}", requestSaveUserDto.toString() );
         if (checkUserExist(requestSaveUserDto.getEmail(), requestSaveUserDto.getLoginType())) {
+            log.info("[sign up] found user!");
             User user = userRepository.findByEmailAndLoginType(requestSaveUserDto.getEmail(), requestSaveUserDto.getLoginType());
             if (user.isEnabled()) {
                 return ResponseEntity.status(ResultCode.OK.getCode())
@@ -81,7 +83,8 @@ public class AuthDAOImpl implements AuthDAO {
             return ResponseEntity.status(ResultCode.DUPLICATION_NICKNAME.getCode()).body(ResultCode.DUPLICATION_NICKNAME.getMessage());
         }
     }
-    private boolean checkUserExist(String nickname, String loginType){
-        return userRepository.existsByNickNameAndLoginType(nickname, loginType);
+    private boolean checkUserExist(String email, String loginType){
+        log.info("[auth] check user exist..");
+        return userRepository.existsByEmailAndLoginType(email, loginType);
     }
 }
