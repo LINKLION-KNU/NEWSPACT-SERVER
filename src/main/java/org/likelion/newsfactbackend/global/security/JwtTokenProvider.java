@@ -72,6 +72,8 @@ public class JwtTokenProvider {
         log.info("[JwtTokenProvider] token : {}", token);
         try{
             UserDetails userDetails = userDetailsService.loadUserByUsername(getUserNickName(token));
+            String username = userDetails.getUsername();
+            log.info("[JwtTokenProvider] username : {}",username);
             log.info("[JwtTokenProvider] check authentication success");
             return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
         }catch (RuntimeException e) {
