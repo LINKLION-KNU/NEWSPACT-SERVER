@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c38e48fe-ffe1-41c0-af4f-65f1d01fe6de" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/controller/NewsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/controller/NewsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/request/RequestNewsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/request/RequestNewsDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/response/ResponseNewsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/response/ResponseNewsDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/NewsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/NewsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/impl/NewsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/impl/NewsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/scraps/controller/ScrapsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/scraps/controller/ScrapsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/scraps/domain/Scraps.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/scraps/domain/Scraps.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/domain/enums/loginType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/domain/enums/LoginType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/security/SecurityConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/security/SecurityConfiguration.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2j3mfYGR7tnr2dKIZvEOosqH3q9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.NewsFactBackendApplication.executor": "Run",
+    "git-widget-placeholder": "develop",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="NewsFactBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="springsecurity-study" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.likelion.newsfactbackend.NewsFactBackendApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-17.0.10-azul-17.0.10-4caba194b151-d69ea429" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c38e48fe-ffe1-41c0-af4f-65f1d01fe6de" name="Changes" comment="" />
+      <created>1720624238803</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1720624238803</updated>
+      <workItem from="1720624240079" duration="10052000" />
+      <workItem from="1720783792864" duration="1804000" />
+      <workItem from="1720843057393" duration="94000" />
+      <workItem from="1720843175991" duration="1589000" />
+      <workItem from="1720852617719" duration="22000" />
+      <workItem from="1721395600114" duration="8153000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
