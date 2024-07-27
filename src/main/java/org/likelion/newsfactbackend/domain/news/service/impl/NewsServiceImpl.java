@@ -7,12 +7,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.likelion.newsfactbackend.domain.news.dto.request.PageRequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
 import org.likelion.newsfactbackend.domain.news.service.NewsService;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -64,6 +66,10 @@ public class NewsServiceImpl implements NewsService {
         for (int i = 0; i < OIDS.size(); i++) {
             pressNameMapping.put(OIDS.get(i), PRESS_NAMES.get(i));
         }
+    }
+
+    public ResponseNewsDto getNews(RequestNewsDto requestNewsDto) {
+        return new ResponseNewsDto();
     }
 
     @Override
@@ -136,9 +142,9 @@ public class NewsServiceImpl implements NewsService {
         return articles;
     }
     @Override
-    public Page<ResponseNewsDto> searchNews(RequestNewsDto newsRequestDto) throws IOException {
-        List<ResponseNewsDto> allArticles = fetchNewsArticles(newsRequestDto.getKeyword());
-        Pageable pageable = PageRequest.of(0, newsRequestDto.getSize().intValue());
+    public Page<ResponseNewsDto> searchNews(PageRequestNewsDto pageRequestNewsDto) throws IOException {
+        List<ResponseNewsDto> allArticles = fetchNewsArticles(pageRequestNewsDto.getKeyword());
+        Pageable pageable = PageRequest.of(0, pageRequestNewsDto.getSize().intValue());
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), allArticles.size());
@@ -148,7 +154,7 @@ public class NewsServiceImpl implements NewsService {
         return new PageImpl<>(pagedArticles, pageable, allArticles.size());
     }
 
-    private ResponseNewsDto fetchNewsArticleDetails(String url, String oid) throws IOException {
+    public ResponseNewsDto fetchNewsArticleDetails(String url, String oid) throws IOException {
         Document doc = null;
         for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
             try {

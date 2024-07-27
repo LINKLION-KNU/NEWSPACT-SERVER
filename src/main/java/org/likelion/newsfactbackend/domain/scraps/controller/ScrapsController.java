@@ -25,7 +25,7 @@ public class ScrapsController {
     private final NewsService newsService;
     private final ScrapsService scrapsService;
 
-    @GetMapping()
+    @GetMapping("/news")
     public ResponseEntity<?> getScraps(@RequestParam Long id,
         @RequestParam RequestScrapsNewsDto requestScrapsNewsDto){
 
@@ -41,7 +41,6 @@ public class ScrapsController {
         if (page < 0 || size <= 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("페이지는 0 이상이어야 하며, 크기는 0보다 커야 합니다.");
         }
-
 
         Page<ResponseScrapsNewsDto> scraps = scrapsService.getScrapsByPage(id, PageRequest.of(page, size));
 
