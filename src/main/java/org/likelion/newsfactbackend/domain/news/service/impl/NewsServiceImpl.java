@@ -11,6 +11,8 @@ import org.likelion.newsfactbackend.domain.news.dto.request.PageRequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
 import org.likelion.newsfactbackend.domain.news.service.NewsService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,35 +20,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class NewsServiceImpl implements NewsService {
-    private static final List<String> OIDS = List.of("1023", "1009", "1001", "1003", "1020", "1015", "1032", "1008", "1025", "1081"); // 언론사 id 이데일리 - 1018
 
-    // 언론사 로고
-    private static final List<String> URLS = List.of(
-            "https://mimgnews.pstatic.net/image/upload/office_logo/023/2020/09/03/logo_023_6_20200903164340.png",
-            "https://mimgnews.pstatic.net/image/upload/office_logo/009/2018/10/05/logo_009_6_20181005175405.png",
-            "https://mimgnews.pstatic.net/image/upload/office_logo/001/2020/09/15/logo_001_6_20200915184213.png",
-            "https://mimgnews.pstatic.net/image/upload/office_logo/003/2019/01/23/logo_003_6_20190123191323.jpg",
-            "https://mimgnews.pstatic.net/image/upload/office_logo/020/2019/01/22/logo_020_6_20190122142722.png",
-            "https://mimgnews.pstatic.net/image/upload/office_logo/015/2020/09/15/logo_015_6_20200915190950.png",
-            "https://mimgnews.pstatic.net/image/upload/office_logo/032/2020/09/15/logo_032_6_20200915155035.png",
-            "https://mimgnews.pstatic.net/image/upload/office_logo/008/2020/09/24/logo_008_6_20200924115228.png",
-            "https://mimgnews.pstatic.net/image/upload/office_logo/025/2021/08/24/logo_025_6_20210824123340.png",
-            "https://mimgnews.pstatic.net/image/upload/office_logo/081/2022/01/07/logo_081_6_20220107180811.png" // 서울신문
-            //"https://mimgnews.pstatic.net/image/upload/office_logo/018/2020/09/15/logo_018_6_20200915185838.png" // 이데일리
-    );
-    // 언론사 목록
+    @Value("${news.oids}")
+    private List<String> OIDS;
+
+    @Value("${news.logo.urls}")
+    private List<String> URLS;
     private static final List<String> PRESS_NAMES = List.of(
             "조선일보", "매일경제", "연합뉴스", "뉴시스", "동아일보", "한국경제", "경향신문", "머니투데이", "중앙일보", "서울신문" //이데일리
     );
+
     private static final String BASE_URL = "https://search.naver.com/search.naver?where=news&query={search}&sm=tab_opt&sort=1&photo=0&field=0&pd=0&ds=&de=&docid=&related=0&mynews=1&office_type=1&office_section_code=3&news_office_checked={oid}&nso=so%3Add%2Cp%3Aall&is_sug_officeid=0&office_category=0&service_area=0";
     private static final Gson gson = new Gson();
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
@@ -98,7 +87,7 @@ public class NewsServiceImpl implements NewsService {
                         throw e; // 최대 재시도 횟수에 도달하면 예외를 던짐
                     }
                     try {
-                        TimeUnit.SECONDS.sleep(2); // 재시도 전 대기
+                        TimeUnit.SECONDS.sleep(1); // 재시도 전 대기
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         throw new IOException("Interrupted during retry delay", ie);
@@ -132,7 +121,7 @@ public class NewsServiceImpl implements NewsService {
             }
 
             try {
-                TimeUnit.SECONDS.sleep(2); // 다음 요청 전에 대기
+                TimeUnit.SECONDS.sleep(1); // 다음 요청 전에 대기
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new IOException("Interrupted during sleep", e);
@@ -171,7 +160,7 @@ public class NewsServiceImpl implements NewsService {
                     throw e; // 최대 재시도 횟수에 도달하면 예외를 던짐
                 }
                 try {
-                    TimeUnit.SECONDS.sleep(2); // 재시도 전 대기
+                    TimeUnit.SECONDS.sleep(1); // 재시도 전 대기
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                     throw new IOException("Interrupted during retry delay", ie);
@@ -182,77 +171,87 @@ public class NewsServiceImpl implements NewsService {
         String companyLogo = oidUrlMapping.getOrDefault(oid, "");
         String company = pressNameMapping.getOrDefault(oid, "");
 
-        // 뉴스 유형에 따른 제목 및 내용 추출
-        String title = "";
-        String subTitle = "";
-        String thumbnail = "";
-        String publishDate = "";
+        String title = "";  // 뉴스 제목
+        String contents = "";  // 내용
+        String thumbnailUrl = ""; // 썸네일 url
+        String publishDate = "";  // 발행일자
+        String category = ""; // 카테고리
+        String subContents = ""; // 썸네일 아래 내용
+        String subTitle = ""; // 기사 요약 내용 (100자)
 
-        if (url.contains("m.entertain")) { // 연예 뉴스 추출
-            title = doc.select("#content > div.NewsEnd_container__HcfWh > div > div.NewsEnd_main_group__d5k8S > div > div.NewsEndMain_comp_article_head__Uqd6M > div.NewsEndMain_article_head_title__ztaL4 > h2").text();
+        category = doc.select("#contents > div.media_end_categorize > a > em").text();
+        title = doc.select(".media_end_head_headline").text();
+        //subContents = doc.select("#dic_area > span:nth-child(1) > em").text();
 
-            Element contentElement = doc.select("#comp_news_article > div._article_content").first();
-            if (contentElement != null) {
-                subTitle = contentElement.text();
-            }
-            Element imgElement = doc.selectFirst("#comp_news_article > div._article_content > span > span > span > img");
-            if (imgElement != null) {
-                thumbnail = imgElement.absUrl("src");
-            }
-            Element entDateElement = doc.selectFirst("#content > div.NewsEnd_container__HcfWh > div > div.NewsEnd_main_group__d5k8S > div > div.NewsEndMain_comp_article_head__Uqd6M > div.article_head_info > div.NewsEndMain_article_head_date_info__jGlzH > div > em");
-            if (entDateElement != null) {
-                publishDate = entDateElement.text();
-            }
 
-        } else if (url.contains("m.sports")) { // 스포츠 뉴스 추출
-            title = doc.select("a.news_tit").text();
-            Element contentElement = doc.select("#comp_news_article > div._article_content > span:nth-child(6)").first();
-            if (contentElement != null) {
-                contentElement.select("div, p").remove();
-                subTitle = contentElement.text();
-            }
-            Element imgElement = doc.selectFirst("#comp_news_article > div._article_content > span > span > span > img");
-            if (imgElement != null) {
-                thumbnail = imgElement.absUrl("src");
-            }
-            Element dateElement = doc.selectFirst("#content > div.NewsEnd_container__HcfWh > div > div.NewsEnd_main_group__d5k8S > div > div.NewsEndMain_comp_article_head__Uqd6M > div.article_head_info > div.NewsEndMain_article_head_date_info__jGlzH > div:nth-child(1) > em");
-            if (dateElement != null) {
-                publishDate = dateElement.text();
+        // 썸네일 아래
+        Element subArticleContent = doc.selectFirst("#dic_area > span:nth-child(1) > em");
+        if (subArticleContent != null) {
+            subContents = subArticleContent.text();
+        }
+        if (subArticleContent == null) {
+            subContents = doc.select("#dic_area > span > em").text();
+//            } if(subArticleContent == null){
+//                subContents = doc.select("#dic_area > div.ab_photo.photo_left > div > span.end_photo_org > em").text();
+//            }
+        }
+
+        // 썸네일 이미지
+        Element imgElement = doc.selectFirst("#img1");
+        if (imgElement != null) {
+            thumbnailUrl = imgElement.absUrl("data-src");
+        }
+
+        // 발행일자
+        Element dateElement = doc.selectFirst(".media_end_head_info_datestamp_time");
+        if (dateElement != null) {
+            publishDate = dateElement.text();
+        }
+
+
+        Element subArticleContents = doc.selectFirst(".go_trans._article_content");
+        if (subArticleContents != null) {
+            subTitle = subArticleContents.text();
+            /* 글자 100자 출력 */
+            int maxLength = 100;
+            if (subTitle.length() > maxLength) {
+                subTitle = subTitle.substring(0, maxLength);
             }
         }
 
-        // 일반 뉴스 추출
-        else {
-            title = doc.select(".media_end_head_headline").text();
-            Element articleContent = doc.selectFirst(".go_trans._article_content");
-            if (articleContent != null) {
-                subTitle = articleContent.text();
-                /* 글자 100자 출력 */
-                int maxLength = 100;
-                if (subTitle.length() > maxLength) {
-                    subTitle = subTitle.substring(0, maxLength);
-                }
-            }
-            Element imgElement = doc.selectFirst("#img1");
-            if (imgElement != null) {
-                thumbnail = imgElement.absUrl("data-src");
-            }
-            Element dateElement = doc.selectFirst(".media_end_head_info_datestamp_time");
-            if (dateElement != null) {
-                publishDate = dateElement.text();
-            }
+        // <br> 남기고 제거
+        Element articleContent = doc.selectFirst(".go_trans._article_content");
+        if (articleContent != null) {
+            contents = articleContent.html(); //text();, wholeText();
+            articleContent.select("span").forEach(Element::remove);
+            articleContent.select("strong").remove();
+            articleContent.select("div").forEach(Element::remove);
+            contents = articleContent.html();
+        }
 
+
+        // 줄바꿈
+        List<String> cleanedContentsList = Arrays.asList(contents.split("\\n<br>\\n<br>\\n"));
+
+        List<String> contentsList = new ArrayList<>();
+        for (String paragraph : cleanedContentsList) {
+            String cleanContents = paragraph.replaceAll("<br>|<br>\\n|<!-- r_start //--><!-- r_end //-->|<!-- r_start //-->|<!-- r_end //-->|\\n|", "");
+            contentsList.add(cleanContents);
         }
 
         // ResponseNewsDto 객체 생성 및 반환
         return ResponseNewsDto.builder()
-                .companyLogo(companyLogo)
-                .company(company)
-                .title(title)
-                .subTitle(subTitle)
-                .thumbnail(thumbnail)
-                .publishDate(publishDate)
-                .newsUrl(url)
+                .companyLogo(companyLogo) // 언론사 로고
+                .contentsList(contentsList) // 줄바꿈 포함한 뉴스
+                .company(company) // 언론사
+                .category(category) // 뉴스 카테고리
+                .title(title) // 제목
+                .subContents(subContents) // 썸네일 아래
+                .thumbnailUrl(thumbnailUrl) // 썸네일
+                .subTitle(subTitle)  // 페이징 할 때 먼저 100자
+                .publishDate(publishDate) // 발행일자
+                .newsUrl(url) // 뉴스 원문 url
                 .build();
+
     }
 }
