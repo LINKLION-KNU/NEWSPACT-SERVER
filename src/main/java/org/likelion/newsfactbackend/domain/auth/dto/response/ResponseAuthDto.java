@@ -12,7 +12,6 @@ import org.likelion.newsfactbackend.global.domain.CommonResponse;
 @Builder
 public class ResponseAuthDto {
     private String accessToken;
-    private String refreshToken;
     private String name;
     private CommonResponse<?> status;
 }
