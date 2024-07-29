@@ -129,6 +129,11 @@ public class AuthServiceImpl implements AuthService {
         return null;
     }
 
+    @Override
+    public ResponseEntity<?> logOut(String token) {
+        return authDAO.deleteToken(token);
+    }
+
     private RequestSaveUserDto getGoogleUserInfo(String accessToken){
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
