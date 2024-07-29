@@ -1,12 +1,13 @@
 package org.likelion.newsfactbackend.domain.news.service.impl;
 
-import com.google.gson.Gson;
+
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.likelion.newsfactbackend.domain.news.dto.RecommendNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.PageRequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
@@ -37,7 +38,6 @@ public class NewsServiceImpl implements NewsService {
     );
 
     private static final String BASE_URL = "https://search.naver.com/search.naver?where=news&query={search}&sm=tab_opt&sort=1&photo=0&field=0&pd=0&ds=&de=&docid=&related=0&mynews=1&office_type=1&office_section_code=3&news_office_checked={oid}&nso=so%3Add%2Cp%3Aall&is_sug_officeid=0&office_category=0&service_area=0";
-    private static final Gson gson = new Gson();
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
     private static final int TIMEOUT = 10000; // 10초
     private static final int RETRY_COUNT = 3; // 재시도 횟수
@@ -129,6 +129,30 @@ public class NewsServiceImpl implements NewsService {
         }
 
         return articles;
+    }
+    public List<RecommendNewsDto> getRecommendedArticles(List<ResponseNewsDto> allArticles) {
+        List<RecommendNewsDto> recommendedArticles = new ArrayList<>();
+        Random random = new Random();
+        int recommendedCount = 4;
+
+        if (allArticles != null) {
+            int count = Math.min(recommendedCount, allArticles.size());
+
+            for (int i = 0; i < count; i++) {
+                int index = random.nextInt(allArticles.size());
+                ResponseNewsDto article = allArticles.remove(index);
+
+                recommendedArticles.add(RecommendNewsDto.builder()
+                        .thumbnailUrl(article.getThumbnailUrl())
+                        .title(article.getTitle())
+                        .companyLogo(article.getCompanyLogo())
+                        .newsUrl(article.getNewsUrl())
+                        .build());
+            }
+        }
+
+
+        return recommendedArticles;
     }
     @Override
     public Page<ResponseNewsDto> searchNews(PageRequestNewsDto pageRequestNewsDto) throws IOException {

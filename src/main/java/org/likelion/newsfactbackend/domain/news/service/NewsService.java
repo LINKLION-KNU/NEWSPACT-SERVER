@@ -1,5 +1,6 @@
 package org.likelion.newsfactbackend.domain.news.service;
 
+import org.likelion.newsfactbackend.domain.news.dto.RecommendNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.PageRequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
@@ -18,4 +19,5 @@ public interface NewsService {
     Page<ResponseNewsDto> searchNews(PageRequestNewsDto pageRequestNewsDto) throws IOException;
     ResponseNewsDto fetchNewsArticleDetails(String url, String oid) throws IOException;
     ResponseNewsDto getNews(RequestNewsDto requestNewsDto);
+    List<RecommendNewsDto> getRecommendedArticles(List<ResponseNewsDto> allArticles);
 }
