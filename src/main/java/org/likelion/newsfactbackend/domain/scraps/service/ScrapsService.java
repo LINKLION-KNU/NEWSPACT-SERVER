@@ -25,21 +25,19 @@ public interface ScrapsService {
      * @Param: RequestSaveScrapsDto
      * @Return: Boolean -> 정상 저장 = true, 저장 시 오류 발생 -> false
     */
-    Boolean scrapNews(RequestSaveScrapsDto requestSaveScrapsDto);
+    Boolean scrapNews(RequestSaveScrapsDto requestSaveScrapsDto, String nickName);
     /*
      * desc: scrap을 삭제하는 서비스
      * @Param: Long -> 삭제하려는 scrap의 id
      * @Return: Boolean -> 정상 삭제 = true, 삭제 시 오류 발생 -> false
     */
-    Boolean deleteScrap(Long id);
+    Boolean deleteScrap(Long id, String nickName);
     /*
      * desc: scrap 조회 서비스
-     * @Param: Long -> 조회하려는 scrap의 id (추후 검색어로 수정 예정)
      * @Param: Pageable -> page 조회 쿼리 정보
      * @Return: Page -> 조회된 scrap 페이지 정보
      */
-    Page<ResponseScrapsNewsDto> getScrapsByPage(Long id, Pageable pageable);
-    /*ResponseEntity<?> scrapNews(RequestScrapsNewsDto requestScrapsNewsDto);*/
+    Page<ResponseScrapsNewsDto> getScrapsByPage(Pageable pageable, String nickname);
 }
 
 
