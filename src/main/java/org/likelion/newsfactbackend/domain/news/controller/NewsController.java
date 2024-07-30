@@ -3,8 +3,8 @@ package org.likelion.newsfactbackend.domain.news.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.likelion.newsfactbackend.domain.news.dto.RecommendNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.PageRequestNewsDto;
-import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
 import org.likelion.newsfactbackend.domain.news.exception.ErrorCode;
 import org.likelion.newsfactbackend.domain.news.exception.NewsException;
@@ -67,5 +67,11 @@ public class NewsController {
 
     private boolean isNull(String str) {
         return str == null || str.trim().isEmpty();
+    }
+
+    @GetMapping("/search/recommend")
+    public List<RecommendNewsDto> recommendNews(@RequestParam String keyword) throws IOException {
+        List<ResponseNewsDto> allArticles = newsService.fetchAllNewsArticles(keyword);
+        return newsService.getRecommendedArticles(allArticles);
     }
 }
