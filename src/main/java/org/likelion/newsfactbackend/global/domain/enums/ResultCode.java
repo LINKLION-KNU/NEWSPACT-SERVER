@@ -9,6 +9,7 @@ public enum ResultCode {
     FAIL(400,"실패"),
     UNAUTHORIZED(403, "권한 없음"),
     PASSWORD_NOT_MATCH(403, "비밀번호 불일치"),
+    TOKEN_IS_NULL(401,"토큰값이 null 입니다."),
     DELETED_USER(401, "탈퇴 유저"),
     TOKEN_IS_NULL(401,"토큰값이 null 입니다."),
     EXPIRED_TOKEN(401, "토큰 유효 기간 만료"),

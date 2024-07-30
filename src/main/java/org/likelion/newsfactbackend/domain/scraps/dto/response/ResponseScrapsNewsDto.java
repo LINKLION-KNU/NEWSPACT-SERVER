@@ -11,12 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseScrapsNewsDto {
+    private Long id;
     private String company;
     private String title;
     private String date;
-    private String img;
-    private String content;
-    private String writer;
-    private String writerEmail;
-    private String keyword;
+    private String thumbNailUrl;
+    private String newsUrl;
 }

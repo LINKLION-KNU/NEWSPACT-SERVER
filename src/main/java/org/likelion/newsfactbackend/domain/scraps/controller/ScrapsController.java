@@ -1,86 +1,80 @@
 package org.likelion.newsfactbackend.domain.scraps.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.likelion.newsfactbackend.domain.news.service.NewsService;
+import lombok.extern.slf4j.Slf4j;
 import org.likelion.newsfactbackend.domain.scraps.dto.request.RequestSaveScrapsDto;
 import org.likelion.newsfactbackend.domain.scraps.dto.request.RequestScrapsNewsDto;
 import org.likelion.newsfactbackend.domain.scraps.dto.response.ResponseScrapsNewsDto;
 import org.likelion.newsfactbackend.domain.scraps.service.ScrapsService;
+import org.likelion.newsfactbackend.global.domain.enums.ResultCode;
 import org.likelion.newsfactbackend.global.security.JwtTokenProvider;
-import org.likelion.newsfactbackend.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/scraps")
 @RequiredArgsConstructor
+@Slf4j
 public class ScrapsController {
 
-    private final NewsService newsService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final ScrapsService scrapsService;
 
+    @Operation(summary = "스크랩 뉴스 조회" , description = "유저가 저장한 뉴스들을 반환합니다.")
     @GetMapping("/news")
-    public ResponseEntity<?> getScraps(@RequestParam Long id,
-        @RequestParam RequestScrapsNewsDto requestScrapsNewsDto){
-
-        Integer page = requestScrapsNewsDto.getPage();
-        Integer size = requestScrapsNewsDto.getSize();
-
-        //1. 필드가 null인지 확인
-        if (page == 0 || size == 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("page값과 size값이 필요합니다.");
-        }
-
+    public ResponseEntity<?> getScraps(@RequestParam(defaultValue = "6") int size,
+                                       @RequestParam(defaultValue = "0") int page,
+                                       HttpServletRequest request){
         //2. 필드의 범위 확인
         if (page < 0 || size <= 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("페이지는 0 이상이어야 하며, 크기는 0보다 커야 합니다.");
         }
 
-        Page<ResponseScrapsNewsDto> scraps = scrapsService.getScrapsByPage(id, PageRequest.of(page, size));
+        String token = jwtTokenProvider.extractToken(request);
+        if(token==null){
+            return ResultCode.TOKEN_IS_NULL.toResponseEntity();
+        }
+        String nickName = jwtTokenProvider.getUserNickName(token);
+        if(nickName==null){
+            return ResultCode.NOT_FOUND_USER.toResponseEntity();
+        }
 
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
+
+        Page<ResponseScrapsNewsDto> scraps = scrapsService.getScrapsByPage(pageable, nickName);
 
         return ResponseEntity.status(HttpStatus.OK).body(scraps);
     }
 
 
+    @Operation(summary = "뉴스 스크랩",description = "유저가 읽고 있는 기사를 저장합니다.")
     @PostMapping()
-    public ResponseEntity<?> createScrap(RequestSaveScrapsDto requestSaveScrapsDto, HttpServletRequest request, String name) {
-
-        /*        *//* 1. 토큰 만료 예외 처리 *//*
-        if (!jwtTokenProvider.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 유효 기간 만료");
-        }
-
-        *//* 2. 사용자가 없을 경우 예외 처리 *//*
-        if (userService.loadUserByUsername(name) == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자를 찾을 수 없습니다.");
-        }
-        if (user.isEnabled()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("탈퇴 회원입니다.");
-        }
-        */
-
+    public ResponseEntity<?> createScrap(RequestSaveScrapsDto requestSaveScrapsDto, HttpServletRequest request) {
         if (requestSaveScrapsDto.getCompany().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Company 값이 없습니다.");
         }
         if (requestSaveScrapsDto.getTitle().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("제목이 없습니다.");
         }
-        if (requestSaveScrapsDto.getContent().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("글이 없습니다.");
+
+        String token = jwtTokenProvider.extractToken(request);
+        if(token==null){
+            return ResultCode.TOKEN_IS_NULL.toResponseEntity();
         }
-        if (requestSaveScrapsDto.getKeyword().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("키워드 값이 없습니다.");
+        String nickName = jwtTokenProvider.getUserNickName(token);
+        if(nickName==null){
+            return ResultCode.NOT_FOUND_USER.toResponseEntity();
         }
 
         try {
-            Boolean isSave = scrapsService.scrapNews(requestSaveScrapsDto);
+            Boolean isSave = scrapsService.scrapNews(requestSaveScrapsDto, nickName);
 
             if (isSave) {
                 return ResponseEntity.status(HttpStatus.OK).body("뉴스를 성공적으로 저장하였습니다.");
@@ -93,21 +87,26 @@ public class ScrapsController {
         }
     }
 
-
-    @DeleteMapping
-    public ResponseEntity<?> deleteScrap(@RequestParam Long id) {
+    @Operation(summary = "스크랩 뉴스 삭제", description = "유저가 저장한 뉴스를 삭제합니다.")
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteScrap(@RequestParam Long id, HttpServletRequest request) {
 
         //id가 null값이면 예외처리
         if (id == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력 값이 잘못되었습니다.");
 
-        //id가 Scrpas에 존재하지 않으면 예외처리
-        if (!scrapsService.findScrapsById(id))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 뉴스입니다.");
+        String token = jwtTokenProvider.extractToken(request);
+        if(token==null){
+            return ResultCode.TOKEN_IS_NULL.toResponseEntity();
+        }
+        String nickName = jwtTokenProvider.getUserNickName(token);
+        if(nickName==null){
+            return ResultCode.NOT_FOUND_USER.toResponseEntity();
+        }
 
         //예외처리에 걸리지 않을 시 Delete
         try {
-            if(scrapsService.deleteScrap(id)){
+            if(scrapsService.deleteScrap(id, nickName)){
                 return ResponseEntity.status(HttpStatus.OK).body("뉴스를 성공적으로 삭제하였습니다.");
             }else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생하였습니다.");
