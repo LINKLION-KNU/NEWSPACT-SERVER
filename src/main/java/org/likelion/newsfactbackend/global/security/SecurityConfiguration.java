@@ -2,6 +2,7 @@ package org.likelion.newsfactbackend.global.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,10 +53,14 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/news/**").hasRole("USER")
+                        .requestMatchers("/api/v1/auth/google/callback"
+                                ,"/api/v1/auth/google/callback").permitAll()
                         .requestMatchers(PATTERNS).permitAll()
-                        .requestMatchers("/api/v1/**").hasRole("USER")
+
+                        .requestMatchers("/api/v1/auth/log-out", // LOGOUT API
+                                "/api/v1/news/**", // NEWS API
+                                "/api/v1/**") // ALL
+                                    .hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
