@@ -2,6 +2,9 @@ package org.likelion.newsfactbackend.domain.scraps.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.likelion.newsfactbackend.user.domain.User;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,18 +29,15 @@ public class Scraps {
     private String date;
 
     @Column(nullable = false, unique = false)
-    private String img;
+    private String thumbNailUrl;
 
     @Column(nullable = false, unique = false)
-    private String content;
+    private String newsUrl;
 
-    @Column(nullable = false, unique = false)
-    private String writer;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
-    @Column(nullable = false, unique = false)
-    private String writerEmail;
-
-    @Column(nullable = false, unique = false)
-    private String keyword;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

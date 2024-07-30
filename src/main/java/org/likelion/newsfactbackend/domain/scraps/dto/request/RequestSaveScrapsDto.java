@@ -12,9 +12,6 @@ public class RequestSaveScrapsDto {
     private String company;
     private String title;
     private String date;
-    private String img;
-    private String content;
-    private String writer;
-    private String writerEmail;
-    private String keyword;
+    private String thumbNailUrl;
+    private String newsUrl;
 }
