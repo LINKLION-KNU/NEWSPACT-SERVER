@@ -10,4 +10,6 @@ public interface AuthService {
      * @return
      */
     ResponseEntity<?> signIn(String authorizeCode, String type);
+
+    ResponseEntity<?> logOut(String token);
 }
