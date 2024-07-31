@@ -69,9 +69,28 @@ public class NewsController {
         return str == null || str.trim().isEmpty();
     }
 
+    @Operation(summary = "추천 뉴스 기사를 반환합니다.")
     @GetMapping("/search/recommend")
     public List<RecommendNewsDto> recommendNews(@RequestParam String keyword) throws IOException {
         List<ResponseNewsDto> allArticles = newsService.fetchAllNewsArticles(keyword);
         return newsService.getRecommendedArticles(allArticles);
     }
+
+    @Operation(summary = "카테고리별 뉴스 기사를 반환합니다.")
+    @GetMapping("/search/category")
+    public ResponseEntity getNewsByCategory(@RequestParam Integer sid, @RequestParam String search) throws IOException {
+
+        if (sid == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 카테고리가 없습니다.");
+        }
+        List<ResponseNewsDto> newsByCategory = newsService.getNewsByCategory(sid, search);
+
+        if (newsByCategory == null || newsByCategory.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 카테고리의 뉴스 기사가 없습니다.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(newsByCategory);
+
+    }
 }
+
