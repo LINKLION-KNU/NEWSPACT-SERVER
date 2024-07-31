@@ -49,6 +49,7 @@ public class AuthDAOImpl implements AuthDAO {
                             jwtTokenProvider.getExpireTime(refreshToken).getTime() - System.currentTimeMillis(),
                             TimeUnit.MILLISECONDS
                     );
+                    log.info("[auth] saved refresh token in redis successfully!");
                 }catch (Exception e){
                     log.error("[auth] error occurred saving redis data...");
                     e.printStackTrace();
@@ -56,7 +57,7 @@ public class AuthDAOImpl implements AuthDAO {
                 return ResponseEntity.status(ResultCode.OK.getCode())
                         .body(ResponseAuthDto.builder()
                                 .accessToken(jwtTokenProvider.createAccessToken(user.getEmail(), user.getNickName(), user.getRoles()))
-                                .name(user.getUsername())
+                                .name(user.getName())
                                 .status(CommonResponse.success())
                                 .build());
             } else {
@@ -85,16 +86,18 @@ public class AuthDAOImpl implements AuthDAO {
 
                     String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getNickName());
 
+                    log.info("[auth] saving refresh token in redis..");
                     redisConfig.redisTemplate().opsForValue().set(user.getNickName(),
                             refreshToken,
                             jwtTokenProvider.getExpireTime(refreshToken).getTime() - System.currentTimeMillis(),
                             TimeUnit.MILLISECONDS
                     );
+                    log.info("[auth] saved refresh token in redis successfully!");
 
                     return ResponseEntity.status(ResultCode.OK.getCode())
                             .body(ResponseAuthDto.builder()
                                     .accessToken(jwtTokenProvider.createAccessToken(user.getEmail(), user.getNickName(), user.getRoles()))
-                                    .name(requestSaveUserDto.getName())
+                                    .name(user.getName())
                                     .status(CommonResponse.success())
                                     .build());
                 } catch (DataIntegrityViolationException e) { // 중복 시 재설정 후 다시 save
@@ -112,11 +115,11 @@ public class AuthDAOImpl implements AuthDAO {
         Authentication authentication = jwtTokenProvider.getAuthentication(token);
         log.info("[auth] logout user name : {}", authentication.getName());
 
-        if (redisConfig.redisTemplate().opsForValue().get(authentication.getName())!=null){
-            // Refresh Token을 삭제
-            redisConfig.redisTemplate().delete(authentication.getName());
+        if (redisConfig.redisTemplate().opsForValue().get(authentication.getName())!=null){ // refresh token 이 있을 경우
 
-            redisConfig.redisTemplate().opsForValue().set(token,
+            redisConfig.redisTemplate().delete(authentication.getName()); // refresh token 삭제
+
+            redisConfig.redisTemplate().opsForValue().set(token, // save {token : logout}
                     "logout",
                     jwtTokenProvider.getExpireTime(token).getTime() - System.currentTimeMillis(),
                     TimeUnit.MILLISECONDS);
