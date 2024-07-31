@@ -28,6 +28,8 @@ public class ResponseNewsDto {
     private String category;
     private String subContents;
     private String thumbnailUrl = "/images/default_thumbnail.jpg";
+    private int sid;
+    private String articleUrl;
 
     public ResponseNewsDto(String companyLogo, String company, String title, String subTitle, String thumbnailUrl, String publishDate, String newsUrl) {
         this.companyLogo = companyLogo;
