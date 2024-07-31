@@ -20,4 +20,6 @@ public interface NewsService {
     ResponseNewsDto fetchNewsArticleDetails(String url, String oid) throws IOException;
     ResponseNewsDto getNews(RequestNewsDto requestNewsDto);
     List<RecommendNewsDto> getRecommendedArticles(List<ResponseNewsDto> allArticles);
+    List<ResponseNewsDto> getNewsByCategory(Integer sid, String keyword) throws IOException;
+
 }

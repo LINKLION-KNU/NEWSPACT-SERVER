@@ -3,6 +3,7 @@ package org.likelion.newsfactbackend.domain.news.service.impl;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +36,10 @@ public class NewsServiceImpl implements NewsService {
     @Value("${news.logo.urls}")
     private List<String> URLS;
     private static final List<String> PRESS_NAMES = List.of(
-            "조선일보", "매일경제", "연합뉴스", "뉴시스", "동아일보", "한국경제", "경향신문", "머니투데이", "중앙일보", "서울신문" //이데일리
-    );
+            "조선일보", "매일경제", "연합뉴스", "뉴시스", "동아일보", "한국경제", "경향신문", "머니투데이", "중앙일보", "서울신문");
+
+    @Value("${news.category.sids}")
+    private List<String> SIDS;
 
     private static final String BASE_URL = "https://search.naver.com/search.naver?where=news&query={search}&sm=tab_opt&sort=1&photo=0&field=0&pd=0&ds=&de=&docid=&related=0&mynews=1&office_type=1&office_section_code=3&news_office_checked={oid}&nso=so%3Add%2Cp%3Aall&is_sug_officeid=0&office_category=0&service_area=0";
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
@@ -44,6 +48,7 @@ public class NewsServiceImpl implements NewsService {
 
     private Map<String, String> oidUrlMapping;
     private Map<String, String> pressNameMapping;
+
     @PostConstruct
     public void init() {
         oidUrlMapping = new HashMap<>();
@@ -68,6 +73,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public List<ResponseNewsDto> fetchNewsArticles(String search) throws IOException {
         List<ResponseNewsDto> articles = new ArrayList<>();
+        List<String> newsCategoryUrl = new ArrayList<>(); // url로 카테고리 처리
 
         for (String oid : OIDS) {
             String url = BASE_URL.replace("{search}", search).replace("{oid}", oid);
@@ -108,12 +114,16 @@ public class NewsServiceImpl implements NewsService {
                     continue; // "n.news" 형태의 URL이 아닌 경우 건너뜀
                 }
 
+                newsCategoryUrl.add(articleUrl); // Url을 리스트에 추가
+
                 ResponseNewsDto article = fetchNewsArticleDetails(articleUrl, oid);
                 if (article != null) {
                     articles.add(article);
                     validArticleFound = true;
                     break; // 유효한 기사를 찾으면 루프 종료
                 }
+
+
             }
 
             if (!validArticleFound) {
@@ -150,10 +160,28 @@ public class NewsServiceImpl implements NewsService {
                         .build());
             }
         }
-
-
         return recommendedArticles;
     }
+
+    public List<ResponseNewsDto> getNewsByCategory(Integer sid, String search) throws IOException{
+        List<ResponseNewsDto> categoryArticle = new ArrayList<>();
+        List<ResponseNewsDto> articles = fetchNewsArticles(search);
+
+        if (sid == null || !SIDS.contains(sid.toString())) {
+            return categoryArticle; // 빈 리스트 반환
+        }
+
+        for (ResponseNewsDto article : articles) {
+            // URL에서 sid를 추출
+            String newsUrl = article.getNewsUrl();
+            if (newsUrl.contains("sid=" + sid)) {
+                categoryArticle.add(article); // 해당 sid가 포함된 기사 추가
+            }
+        }
+        return categoryArticle;
+
+    }
+
     @Override
     public Page<ResponseNewsDto> searchNews(PageRequestNewsDto pageRequestNewsDto) throws IOException {
         List<ResponseNewsDto> allArticles = fetchNewsArticles(pageRequestNewsDto.getKeyword());
@@ -279,3 +307,4 @@ public class NewsServiceImpl implements NewsService {
 
     }
 }
+
