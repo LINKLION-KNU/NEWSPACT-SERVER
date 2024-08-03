@@ -56,7 +56,15 @@ public class ScrapsController {
 
     @Operation(summary = "뉴스 스크랩",description = "유저가 읽고 있는 기사를 저장합니다.")
     @PostMapping()
-    public ResponseEntity<?> createScrap(RequestSaveScrapsDto requestSaveScrapsDto, HttpServletRequest request) {
+    public ResponseEntity<?> createScrap(@RequestBody RequestSaveScrapsDto requestSaveScrapsDto, HttpServletRequest request) {
+
+        try{
+            log.info("[scraps] dto : {}", requestSaveScrapsDto.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         if (requestSaveScrapsDto.getCompany().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Company 값이 없습니다.");
         }
