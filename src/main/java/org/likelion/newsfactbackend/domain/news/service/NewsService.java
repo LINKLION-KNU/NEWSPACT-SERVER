@@ -22,4 +22,6 @@ public interface NewsService {
     ResponseNewsAnalysisDto analyzeNews(String url) throws IOException;
 
     List<RecommendNewsDto> getRecommendedArticles(List<ResponseNewsDto> allArticles);
+    List<ResponseNewsDto> getNewsByCategory(Integer sid, String keyword) throws IOException;
+
 }
