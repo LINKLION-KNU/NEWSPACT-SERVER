@@ -1,8 +1,11 @@
 package org.likelion.newsfactbackend.domain.news.service.impl;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,6 +13,7 @@ import org.jsoup.select.Elements;
 import org.likelion.newsfactbackend.domain.news.dto.RecommendNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.PageRequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
+import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsAnalysisDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
 import org.likelion.newsfactbackend.domain.news.service.NewsService;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +21,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.*;
@@ -26,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NewsServiceImpl implements NewsService {
 
     @Value("${news.oids}")
@@ -33,6 +44,9 @@ public class NewsServiceImpl implements NewsService {
 
     @Value("${news.logo.urls}")
     private List<String> URLS;
+    @Value(("${ai.server.host}"))
+    private String AI_HOST;
+    private final ObjectMapper objectMapper;
     private static final List<String> PRESS_NAMES = List.of(
             "조선일보", "매일경제", "연합뉴스", "뉴시스", "동아일보", "한국경제", "경향신문", "머니투데이", "중앙일보", "서울신문" //이데일리
     );
@@ -168,29 +182,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     public ResponseNewsDto fetchNewsArticleDetails(String url, String oid) throws IOException {
-        Document doc = null;
-        for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
-            try {
-                doc = Jsoup.connect(url)
-                        .header("User-Agent", USER_AGENT)
-                        .header("Accept-Language", "en-US,en;q=0.5")
-                        .header("Referer", "https://www.naver.com/")
-                        .timeout(TIMEOUT)
-                        .get();
-                break; // 성공 시 루프 종료
-            } catch (IOException e) {
-                System.err.println("Attempt " + attempt + " failed for URL: " + url + " - " + e.getMessage());
-                if (attempt == RETRY_COUNT) {
-                    throw e; // 최대 재시도 횟수에 도달하면 예외를 던짐
-                }
-                try {
-                    TimeUnit.SECONDS.sleep(1); // 재시도 전 대기
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new IOException("Interrupted during retry delay", ie);
-                }
-            }
-        }
+        Document doc = crawlingNews(url);
 
         String companyLogo = oidUrlMapping.getOrDefault(oid, "");
         String company = pressNameMapping.getOrDefault(oid, "");
@@ -243,25 +235,8 @@ public class NewsServiceImpl implements NewsService {
             }
         }
 
-        // <br> 남기고 제거
-        Element articleContent = doc.selectFirst(".go_trans._article_content");
-        if (articleContent != null) {
-            contents = articleContent.html(); //text();, wholeText();
-            articleContent.select("span").forEach(Element::remove);
-            articleContent.select("strong").remove();
-            articleContent.select("div").forEach(Element::remove);
-            contents = articleContent.html();
-        }
 
-
-        // 줄바꿈
-        List<String> cleanedContentsList = Arrays.asList(contents.split("\\n<br>\\n<br>\\n"));
-
-        List<String> contentsList = new ArrayList<>();
-        for (String paragraph : cleanedContentsList) {
-            String cleanContents = paragraph.replaceAll("<br>|<br>\\n|<!-- r_start //--><!-- r_end //-->|<!-- r_start //-->|<!-- r_end //-->|\\n|", "");
-            contentsList.add(cleanContents);
-        }
+        List<String> contentsList = extractContents(doc); // 뉴스 본문 추출
 
         // ResponseNewsDto 객체 생성 및 반환
         return ResponseNewsDto.builder()
@@ -277,5 +252,110 @@ public class NewsServiceImpl implements NewsService {
                 .newsUrl(url) // 뉴스 원문 url
                 .build();
 
+    }
+
+    @Override
+    public ResponseNewsAnalysisDto analyzeNews(String url) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Document doc = crawlingNews(url); // 뉴스 크롤링
+
+        List<String> contentsList = extractContents(doc); // 뉴스 본문 추출
+
+        log.info("[news analyze] contents : {}", contentsList.toString());
+
+        String jsonContents = objectMapper.writeValueAsString(contentsList);
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+
+        formData.add("contents", jsonContents);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        // HTTP 엔티티 생성
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(formData, headers);
+        log.warn("[news analyzing....]");
+        try{
+            // 요청 보내기
+            ResponseEntity<String> response = restTemplate.postForEntity(AI_HOST, entity, String.class);
+            Map <String, Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+            List<Map<String, Object>> analysisResults = (List<Map<String, Object>>) responseMap.get("analysisResults");
+            Map<String, Double> wordCloudResults = (Map<String, Double>) responseMap.get("wordCloudResults");
+
+            ResponseNewsAnalysisDto responseDto = ResponseNewsAnalysisDto.builder()
+                    .analysisResults(analysisResults)
+                    .wordCloudResults(wordCloudResults)
+                    .build();
+            return responseDto;
+        }catch (Exception e){
+            log.error("[news service] fail to analyze news!");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Document crawlingNews(String url) throws IOException {
+        Document doc = null;
+
+        for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
+            try {
+                doc = Jsoup.connect(url)
+                        .header("User-Agent", USER_AGENT)
+                        .header("Accept-Language", "en-US,en;q=0.5")
+                        .header("Referer", "https://www.naver.com/")
+                        .timeout(TIMEOUT)
+                        .get();
+                return doc; // 성공 시 문서를 반환하고 루프 종료
+            } catch (IOException e) {
+                System.err.println("Attempt " + attempt + " failed for URL: " + url + " - " + e.getMessage());
+                if (attempt == RETRY_COUNT) {
+                    throw e; // 최대 재시도 횟수에 도달하면 예외를 던짐
+                }
+                try {
+                    TimeUnit.SECONDS.sleep(1); // 재시도 전 대기
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Interrupted during retry delay", ie);
+                }
+            }
+        }
+
+        return null; // 모든 시도가 실패한 경우 null 반환
+    }
+    private List<String> extractContents(Document doc){
+        String contents = "";  // 내용
+
+        Element articleContent = doc.selectFirst(".go_trans._article_content");
+        if (articleContent != null) {
+            contents = articleContent.html(); //text();, wholeText();
+            articleContent.select("span").forEach(Element::remove);
+            articleContent.select("strong").remove();
+            articleContent.select("div").forEach(Element::remove);
+            articleContent.select("div").forEach(Element::remove);
+            contents = articleContent.html();
+        }
+
+
+        // 줄바꿈
+        List<String> cleanedContentsList = Arrays.asList(contents.split("\\n<br>\\n<br>\\n"));
+
+        List<String> contentsList = new ArrayList<>();
+        for (String paragraph : cleanedContentsList) {
+            String cleanContents = paragraph.replaceAll("<br>|<br>\\n|<!-- r_start //--><!-- r_end //-->|<!-- r_start //-->|<!-- r_end //-->|\\n|<b>|</b>|<!-- MobileAdNew center -->|<!--article_split-->", "");
+            contentsList.add(cleanContents);
+        }
+
+        String regex = ".*기자.*|\\S+@\\S+\\.\\S+";
+
+        Iterator<String> iterator = contentsList.iterator();
+        while (iterator.hasNext()) {
+            String tmp = iterator.next();
+            if (tmp.matches(regex) || tmp.trim().isEmpty() || tmp.contains("@")) {
+                iterator.remove();
+            }
+        }
+        return contentsList;
     }
 }
