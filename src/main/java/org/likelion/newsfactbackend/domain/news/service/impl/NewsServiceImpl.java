@@ -371,7 +371,7 @@ public class NewsServiceImpl implements NewsService {
 
         List<String> contentsList = new ArrayList<>();
         for (String paragraph : cleanedContentsList) {
-            String cleanContents = paragraph.replaceAll("<br>|<br>\\n|<!-- r_start //--><!-- r_end //-->|<!-- r_start //-->|<!-- r_end //-->|\\n|<b>|</b>|<!-- MobileAdNew center -->|<!--article_split-->", "");
+            String cleanContents = paragraph.replaceAll("<br>|<br>\\n|<!-- r_start //--><!-- r_end //-->|<!-- r_start //-->|<!-- r_end //-->|\\n|<b>|<\\b>|<!-- MobileAdNew center -->|<!--article_split-->|", "");
             contentsList.add(cleanContents);
         }
 
