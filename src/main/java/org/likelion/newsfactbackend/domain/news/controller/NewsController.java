@@ -65,6 +65,16 @@ public class NewsController {
         return ResponseEntity.status(HttpStatus.OK).body(responseNewsDto);
     }
 
+    @Operation(summary = "뉴스 감정 분석 + 워드 클라우드", description = "기사의 감정 분석 결과와 워드클라우드 결과를 반환합니다.")
+    @GetMapping("/news-analysis")
+    public ResponseEntity<?> getNewsAnalysis(@RequestParam String url) throws IOException{
+        if (isNull(url)) {
+            throw new NewsException(ErrorCode.NOT_FOUND_NEWS_URL);
+        }
+        return ResponseEntity.ok(newsService.analyzeNews(url));
+    }
+
+
     private boolean isNull(String str) {
         return str == null || str.trim().isEmpty();
     }

@@ -34,6 +34,12 @@ public class Scraps {
     @Column(nullable = false, unique = false)
     private String newsUrl;
 
+    @Column(nullable = false, unique = false)
+    private String companyLogo;
+
+    @Column(nullable = false, unique = false)
+    private String category;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
