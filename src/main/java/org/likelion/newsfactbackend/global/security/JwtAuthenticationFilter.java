@@ -36,7 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/css/**",
             "/images/**",
             "/js/**",
-            "/favicon.ico"
+            "/favicon.ico",
+            "/get_sentiment_analysis/**"
     );
 
     @Override
@@ -47,6 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.info("[jwtauthentication filter] : {}", request.toString());
         String token = jwtTokenProvider.extractToken(request);
 
         if (!token.isEmpty() && jwtTokenProvider.validateToken(token)) {
