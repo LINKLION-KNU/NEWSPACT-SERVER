@@ -17,4 +17,6 @@ public class ResponseScrapsNewsDto {
     private String date;
     private String thumbNailUrl;
     private String newsUrl;
+    private String companyLogo;
+    private String category;
 }

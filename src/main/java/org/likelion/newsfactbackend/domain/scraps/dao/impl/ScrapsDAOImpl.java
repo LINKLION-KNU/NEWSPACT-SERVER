@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.likelion.newsfactbackend.domain.scraps.dao.ScrapsDAO;
 import org.likelion.newsfactbackend.domain.scraps.domain.Scraps;
 import org.likelion.newsfactbackend.domain.scraps.dto.request.RequestSaveScrapsDto;
-import org.likelion.newsfactbackend.domain.scraps.dto.request.RequestScrapsNewsDto;
 import org.likelion.newsfactbackend.domain.scraps.dto.response.ResponseScrapsNewsDto;
 import org.likelion.newsfactbackend.domain.scraps.repository.ScrapsRepository;
 import org.likelion.newsfactbackend.user.domain.User;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,6 +30,9 @@ public class ScrapsDAOImpl implements ScrapsDAO {
         if(user==null || !user.isEnabled()){ // 유저 존재하지 않음.
             return false;
         }else{
+            if(scrapsRepository.existsByUserAndNewsUrl(user, requestSaveScrapsDto.getNewsUrl())){
+                return false;
+            }
             try{
                 log.warn("[scraps] saving news...");
                 Scraps scraps = Scraps.builder()
@@ -41,6 +42,8 @@ public class ScrapsDAOImpl implements ScrapsDAO {
                         .thumbNailUrl(requestSaveScrapsDto.getThumbNailUrl())
                         .newsUrl(requestSaveScrapsDto.getNewsUrl())
                         .user(user)
+                        .companyLogo(requestSaveScrapsDto.getCompanyLogo())
+                        .category(requestSaveScrapsDto.getCategory())
                         .createdAt(LocalDateTime.now())
                         .build();
 
@@ -108,6 +111,8 @@ public class ScrapsDAOImpl implements ScrapsDAO {
                 .date(scraps.getDate())
                 .thumbNailUrl(scraps.getThumbNailUrl())
                 .newsUrl(scraps.getNewsUrl())
+                .companyLogo(scraps.getCompanyLogo())
+                .category(scraps.getCategory())
                 .build();
     }
 }

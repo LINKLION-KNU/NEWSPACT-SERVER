@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ScrapsRepository extends JpaRepository<Scraps, Long> {
     Page<Scraps> findByUser(User user, Pageable pageable);
     Scraps findByIdAndUser(Long id, User user);
+    boolean existsByUserAndNewsUrl(User user, String newsUrl);
+
 }
