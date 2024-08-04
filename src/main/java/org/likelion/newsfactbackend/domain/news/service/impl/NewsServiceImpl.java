@@ -56,7 +56,16 @@ public class NewsServiceImpl implements NewsService {
     private List<String> SIDS;
 
     private static final String BASE_URL = "https://search.naver.com/search.naver?where=news&query={search}&sm=tab_opt&sort=1&photo=0&field=0&pd=0&ds=&de=&docid=&related=0&mynews=1&office_type=1&office_section_code=3&news_office_checked={oid}&nso=so%3Add%2Cp%3Aall&is_sug_officeid=0&office_category=0&service_area=0";
-    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
+    private static final List<String> USER_AGENTS = List.of(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"
+    );
+
+    private String getRandomUserAgent() {
+        Random rand = new Random();
+        return USER_AGENTS.get(rand.nextInt(USER_AGENTS.size()));
+    }
     private static final int TIMEOUT = 10000; // 10초
     private static final int RETRY_COUNT = 3; // 재시도 횟수
 
@@ -95,7 +104,7 @@ public class NewsServiceImpl implements NewsService {
             for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
                 try {
                     doc = Jsoup.connect(url)
-                            .header("User-Agent", USER_AGENT)
+                            .header("User-Agent", getRandomUserAgent())
                             .header("Accept-Language", "en-US,en;q=0.5")
                             .header("Referer", "https://www.naver.com/")
                             .timeout(TIMEOUT)
@@ -107,7 +116,7 @@ public class NewsServiceImpl implements NewsService {
                         throw e; // 최대 재시도 횟수에 도달하면 예외를 던짐
                     }
                     try {
-                        TimeUnit.SECONDS.sleep(1); // 재시도 전 대기
+                        TimeUnit.SECONDS.sleep(3); // 재시도 전 대기
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         throw new IOException("Interrupted during retry delay", ie);
@@ -145,7 +154,7 @@ public class NewsServiceImpl implements NewsService {
             }
 
             try {
-                TimeUnit.SECONDS.sleep(1); // 다음 요청 전에 대기
+                TimeUnit.SECONDS.sleep(3); // 다음 요청 전에 대기
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new IOException("Interrupted during sleep", e);
@@ -330,7 +339,7 @@ public class NewsServiceImpl implements NewsService {
         for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
             try {
                 doc = Jsoup.connect(url)
-                        .header("User-Agent", USER_AGENT)
+                        .header("User-Agent", getRandomUserAgent())
                         .header("Accept-Language", "en-US,en;q=0.5")
                         .header("Referer", "https://www.naver.com/")
                         .timeout(TIMEOUT)
@@ -342,7 +351,7 @@ public class NewsServiceImpl implements NewsService {
                     throw e; // 최대 재시도 횟수에 도달하면 예외를 던짐
                 }
                 try {
-                    TimeUnit.SECONDS.sleep(1); // 재시도 전 대기
+                    TimeUnit.SECONDS.sleep(3); // 재시도 전 대기
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                     throw new IOException("Interrupted during retry delay", ie);
