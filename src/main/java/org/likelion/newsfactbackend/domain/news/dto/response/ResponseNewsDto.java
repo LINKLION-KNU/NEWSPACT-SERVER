@@ -19,19 +19,20 @@ public class ResponseNewsDto {
     @Builder.Default
     private String companyLogo = "/images/default_logo.png"; /* Default 로고 이미지 경로 */
     private String company = "미상";
+    private List<String> imgUrl = null;
+    private List<String> imgContentList = null;
     private String title;
     private String subTitle = "내용 없음";
     private String publishDate = LocalDate.now().toString(); /* Default 현재 시간 */
     private String newsUrl; // URL
-
     private List<String> contentsList; // 줄바꿈 뉴스 리스트
     private String category;
-    private String subContents;
     private String thumbnailUrl = "/images/default_thumbnail.jpg";
 
-    public ResponseNewsDto(String companyLogo, String company, String title, String subTitle, String thumbnailUrl, String publishDate, String newsUrl) {
+    public ResponseNewsDto(String companyLogo, String company, List<String> imgUrl, String title, String subTitle, String thumbnailUrl, String publishDate, String newsUrl) {
         this.companyLogo = companyLogo;
         this.company = company;
+        this.imgUrl = imgUrl;
         this.title = title;
         this.subTitle = subTitle;
         this.thumbnailUrl = thumbnailUrl;
