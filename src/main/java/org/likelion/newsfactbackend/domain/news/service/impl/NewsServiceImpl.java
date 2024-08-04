@@ -247,11 +247,11 @@ public class NewsServiceImpl implements NewsService {
 
 
 
-        // 썸네일 이미지
-//        Element imgElement = doc.selectFirst("#img1");
-//        if (imgElement != null) {
-//            thumbnailUrl = imgElement.absUrl("data-src");
-//        }
+    // 썸네일 이미지
+       Element imgElement = doc.selectFirst("#img1");
+       if (imgElement != null) {
+           thumbnailUrl = imgElement.absUrl("data-src");
+       }
 
 
         // 발행일자
