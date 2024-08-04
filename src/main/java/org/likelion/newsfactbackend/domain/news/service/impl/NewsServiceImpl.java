@@ -138,7 +138,6 @@ public class NewsServiceImpl implements NewsService {
                     break; // 유효한 기사를 찾으면 루프 종료
                 }
 
-
             }
 
             if (!validArticleFound) {
@@ -219,29 +218,39 @@ public class NewsServiceImpl implements NewsService {
 
         String title = "";  // 뉴스 제목
         String contents = "";  // 내용
-        String thumbnailUrl = ""; // 썸네일 url
-        //List<String> thumbnailUrl;
+        String thumbnailUrl = "";// 썸네일 url
+        List<String> imgList = new ArrayList<>();
+        List<String> imgContentList = new ArrayList<>();
+
         String publishDate = "";  // 발행일자
         String category = ""; // 카테고리
-        String subContents = ""; // 썸네일 아래 내용
         String subTitle = ""; // 기사 요약 내용 (100자)
         List<String> imgContentList;
 
         category = doc.select("#contents > div.media_end_categorize > a > em").text();
         title = doc.select(".media_end_head_headline").text();
-        //subContents = doc.select("#dic_area > span:nth-child(1) > em").text();
 
 
-        // 썸네일 아래
-        Element subArticleContent = doc.selectFirst("#dic_area > span:nth-child(1) > em");
-        if (subArticleContent != null) {
-            subContents = subArticleContent.text();
-        }
-        if (subArticleContent == null) {
-            subContents = doc.select("#dic_area > span > em").text();
-//            } if(subArticleContent == null){
-//                subContents = doc.select("#dic_area > div.ab_photo.photo_left > div > span.end_photo_org > em").text();
-//            }
+
+    // 기사 이미지 반환
+        Elements elements = doc.select("img._LAZY_LOADING._LAZY_LOADING_INIT_HIDE");
+
+        if (!elements.isEmpty()) {
+            for (Element img : elements) {
+                String imgUrl = img.attr("src");
+                String imgContent = img.attr("alt");
+
+                if (imgUrl.isEmpty()) {
+                    imgUrl = img.attr("data-src");
+
+                }
+                if (!(imgUrl.isEmpty() || imgUrl.isBlank())) {
+                    if (!(imgUrl.contains("office_logo") || imgUrl.contains("banner_AI"))) {
+                        imgList.add(imgUrl);
+                        imgContentList.add(imgContent);
+                    }
+                }
+            }
         }
         
 
@@ -276,18 +285,19 @@ public class NewsServiceImpl implements NewsService {
 
         // ResponseNewsDto 객체 생성 및 반환
         return ResponseNewsDto.builder()
+                .imgUrl(imgList)
+                .imgContentList(imgContentList)
                 .companyLogo(companyLogo) // 언론사 로고
                 .contentsList(contentsList) // 줄바꿈 포함한 뉴스
                 .company(company) // 언론사
                 .category(category) // 뉴스 카테고리
                 .title(title) // 제목
-                .subContents(subContents) // 썸네일 아래
                 .thumbnailUrl(thumbnailUrl) // 썸네일
+                .contentsList(contentsList)
                 .subTitle(subTitle)  // 페이징 할 때 먼저 100자
                 .publishDate(publishDate) // 발행일자
                 .newsUrl(url) // 뉴스 원문 url
                 .build();
-
     }
 
     @Override
@@ -394,6 +404,10 @@ public class NewsServiceImpl implements NewsService {
             }
         }
         return contentsList;
+    }
+
+    public boolean isNull(String s) {
+        return s == null;
     }
 }
 
