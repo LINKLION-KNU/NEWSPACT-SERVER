@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,6 +16,7 @@ import org.likelion.newsfactbackend.domain.news.dto.request.RequestNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsAnalysisDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
 import org.likelion.newsfactbackend.domain.news.service.NewsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+
 public class NewsServiceImpl implements NewsService {
 
     @Value("${news.oids}")
@@ -191,6 +192,7 @@ public class NewsServiceImpl implements NewsService {
                 categoryArticle.add(article); // 해당 sid가 포함된 기사 추가
             }
         }
+
         return categoryArticle;
 
     }
@@ -219,9 +221,11 @@ public class NewsServiceImpl implements NewsService {
         String thumbnailUrl = "";// 썸네일 url
         List<String> imgList = new ArrayList<>();
         List<String> imgContentList = new ArrayList<>();
+
         String publishDate = "";  // 발행일자
         String category = ""; // 카테고리
         String subTitle = ""; // 기사 요약 내용 (100자)
+        List<String> imgContentList;
 
         category = doc.select("#contents > div.media_end_categorize > a > em").text();
         title = doc.select(".media_end_head_headline").text();
@@ -248,14 +252,16 @@ public class NewsServiceImpl implements NewsService {
                 }
             }
         }
+        
 
 
 
-        // 썸네일 이미지
-        Element imgElement = doc.selectFirst("#img1");
-        if (imgElement != null) {
-            thumbnailUrl = imgElement.absUrl("data-src");
-        }
+    // 썸네일 이미지
+       Element imgElement = doc.selectFirst("#img1");
+       if (imgElement != null) {
+           thumbnailUrl = imgElement.absUrl("data-src");
+       }
+
 
         // 발행일자
         Element dateElement = doc.selectFirst(".media_end_head_info_datestamp_time");
@@ -336,6 +342,7 @@ public class NewsServiceImpl implements NewsService {
         }
     }
 
+
     private Document crawlingNews(String url) throws IOException {
         Document doc = null;
 
@@ -383,7 +390,7 @@ public class NewsServiceImpl implements NewsService {
 
         List<String> contentsList = new ArrayList<>();
         for (String paragraph : cleanedContentsList) {
-            String cleanContents = paragraph.replaceAll("<br>|<br>\\n|<!-- r_start //--><!-- r_end //-->|<!-- r_start //-->|<!-- r_end //-->|\\n|<b>|<\\b>|<!-- MobileAdNew center -->|<!--article_split-->|", "");
+            String cleanContents = paragraph.replaceAll("<br>|<br>\\n|<!-- r_start //--><!-- r_end //-->|<!-- r_start //-->|<!-- r_end //-->|\\n|<b>|<\\b>|<!-- MobileAdNew center -->|<!--article_split-->|<blockquote style=\"float:inherit; overflow:hidden; height:auto; margin:20px 0; padding:19px 29px; border:1px solid #e5e5e5; background:#f7f7f7; color:#222;font-size: 15px; line-height: 22px; border-radius: 10px\">|</blockquote>|", "");
             contentsList.add(cleanContents);
         }
 
