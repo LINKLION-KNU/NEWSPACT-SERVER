@@ -22,10 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -57,17 +54,18 @@ public class NewsServiceImpl implements NewsService {
     private List<String> SIDS;
     private AtomicInteger userAgentIndex = new AtomicInteger(0); // 0부터 시작
 
+    @Value("${clean.pattern}")
+    private String cleanPattern;
+
     private static final String BASE_URL = "https://search.naver.com/search.naver?where=news&query={search}&sm=tab_opt&sort=1&photo=0&field=0&pd=0&ds=&de=&docid=&related=0&mynews=1&office_type=1&office_section_code=3&news_office_checked={oid}&nso=so%3Add%2Cp%3Aall&is_sug_officeid=0&office_category=0&service_area=0";
     @Value("${user.agent}")
     private List<String> USER_AGENTS;
+
     private String getSequentialUserAgent() {
         int index = userAgentIndex.getAndUpdate(i -> (i + 1) % USER_AGENTS.size());
         String agent = USER_AGENTS.get(index);
-        log.info("[news] agent : {}", agent);
-        return agent;
-    }
 
-
+  
     private static final int TIMEOUT = 10000; // 10초
     private static final int RETRY_COUNT = 3; // 재시도 횟수
 
@@ -95,6 +93,7 @@ public class NewsServiceImpl implements NewsService {
     public List<ResponseNewsDto> fetchAllNewsArticles(String search) throws IOException {
         return fetchNewsArticles(search);
     }
+
     @Override
     public List<ResponseNewsDto> fetchNewsArticles(String search) throws IOException {
         List<ResponseNewsDto> articles = new ArrayList<>();
@@ -103,6 +102,7 @@ public class NewsServiceImpl implements NewsService {
         for (String oid : OIDS) {
             String url = BASE_URL.replace("{search}", search).replace("{oid}", oid);
             Document doc = null;
+
             for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
                 try {
                     doc = Jsoup.connect(url)
@@ -126,6 +126,21 @@ public class NewsServiceImpl implements NewsService {
                 }
             }
 
+            try {
+                doc = Jsoup.connect(url)
+                        .header("User-Agent", getSequentialUserAgent())
+                        .header("Accept-Language", "en-US,en;q=0.5")
+                        .header("Referer", "https://www.naver.com/")
+                        .timeout(TIMEOUT)
+                        .get();
+            } catch (IOException e) {
+                String errorMessage = "검색 중 해당 URL에서 오류가 발생합니다. " + url + " - " + e.getMessage();
+                System.err.println(errorMessage);
+                e.printStackTrace();
+                return (List<ResponseNewsDto>) ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+
+
+            }
             Elements links = doc.select("div.info_group a.info");
             boolean validArticleFound = false;
 
@@ -151,7 +166,7 @@ public class NewsServiceImpl implements NewsService {
             }
 
             if (!validArticleFound) {
-                System.err.println("No valid article found for OID: " + oid);
+                System.err.println("해당 언론사에서 추출할 수 있는 기사가 없습니다 :" + oid);
             }
 
             try {
@@ -162,8 +177,11 @@ public class NewsServiceImpl implements NewsService {
             }
         }
 
+
         return articles;
     }
+
+
     public List<RecommendNewsDto> getRecommendedArticles(List<ResponseNewsDto> allArticles) {
         List<RecommendNewsDto> recommendedArticles = new ArrayList<>();
         Random random = new Random();
@@ -187,7 +205,7 @@ public class NewsServiceImpl implements NewsService {
         return recommendedArticles;
     }
 
-    public List<ResponseNewsDto> getNewsByCategory(Integer sid, String search) throws IOException{
+    public List<ResponseNewsDto> getNewsByCategory(Integer sid, String search) throws IOException {
         List<ResponseNewsDto> categoryArticle = new ArrayList<>();
         List<ResponseNewsDto> articles = fetchNewsArticles(search);
 
@@ -231,46 +249,92 @@ public class NewsServiceImpl implements NewsService {
         String thumbnailUrl = "";// 썸네일 url
         List<String> imgList = new ArrayList<>();
         List<String> imgContentList = new ArrayList<>();
-
+        Map<String, String> imgContentMapping = new HashMap<>();
         String publishDate = "";  // 발행일자
         String category = ""; // 카테고리
         String subTitle = ""; // 기사 요약 내용 (100자)
 
-
         category = doc.select("#contents > div.media_end_categorize > a > em").text();
+        category = category.replace(" ", ", ");
+
         title = doc.select(".media_end_head_headline").text();
 
+        // 썸네일 이미지
+        Element imgElement = doc.selectFirst("#img1");
+        if (imgElement != null) {
+            thumbnailUrl = imgElement.absUrl("data-src");
+        }
 
-
-    // 기사 이미지 반환
+        // 기사 이미지 반환
         Elements elements = doc.select("img._LAZY_LOADING._LAZY_LOADING_INIT_HIDE");
 
         if (!elements.isEmpty()) {
             for (Element img : elements) {
                 String imgUrl = img.attr("src");
-                String imgContent = img.attr("alt");
+                String imgContent = doc.select("#dic_area > span.end_photo_org > em").text();
+
 
                 if (imgUrl.isEmpty()) {
                     imgUrl = img.attr("data-src");
-
                 }
+
                 if (!(imgUrl.isEmpty() || imgUrl.isBlank())) {
-                    if (!(imgUrl.contains("office_logo") || imgUrl.contains("banner_AI"))) {
+                    if (!(imgUrl.contains("office_logo") || imgUrl.contains("banner_AI") || imgUrl.contains("type=nf112_112"))) {
                         imgList.add(imgUrl);
                         imgContentList.add(imgContent);
                     }
                 }
             }
+
+            // imgList와 imgContentList의 매핑
+            for (int i = 0; i < Math.min(imgList.size(), imgContentList.size()); i++) {
+                String imgUrl = imgList.get(i);
+                String imgContent = imgContentList.get(i);
+                imgContentMapping.put(imgUrl, imgContent);
+            }
         }
-        
+
+        List<String> cleanUpList = new ArrayList<>();
+        // articleContent가 존재하는지 확인
+        Element articleContent = doc.selectFirst(".go_trans._article_content");
+        if (articleContent != null) {
+            contents = articleContent.html();
+            articleContent.select("strong").remove();
+            articleContent.select("div").forEach(Element::remove);
+
+            // <span> 태그 이미지 url 대체
+            List<Element> spanElements = articleContent.select("span");
+            for (int i = 0; i < Math.min(spanElements.size(), imgList.size()); i++) {
+                Element span = spanElements.get(i);
+                String imgUrl = imgList.get(i);
+                //String imgContent = imgContentList.get(i);
+                span.text(imgUrl);
+            }
+
+            contents = articleContent.html();  // 변경된 내용을 contents 변수에 저장
+
+            // 내용을 청소하여 리스트로 분할
+            List<String> contentlist = Arrays.asList(contents.split("\\n<br>\\n<br>\\n"));
+            List<String> contentsList = new ArrayList<>();
+            for (String paragraph : contentlist) {
+                String cleanContents = paragraph.replaceAll(cleanPattern, "");
+                contentsList.add(cleanContents);
+                cleanUpList.add(cleanContents);
+            }
+
+            String removeObject = ".*기자.*|\\S+@\\S+\\.\\S+";
+
+            Iterator<String> iterator = cleanUpList.iterator();
+            while (iterator.hasNext()) {
+                String tmp = iterator.next();
+                if (tmp.matches(removeObject) || tmp.trim().isEmpty() || tmp.contains("@")) {
+                    iterator.remove();
+                }
+            }
+        }
 
 
 
-    // 썸네일 이미지
-       Element imgElement = doc.selectFirst("#img1");
-       if (imgElement != null) {
-           thumbnailUrl = imgElement.absUrl("data-src");
-       }
 
 
         // 발행일자
@@ -282,7 +346,10 @@ public class NewsServiceImpl implements NewsService {
 
         Element subArticleContents = doc.selectFirst(".go_trans._article_content");
         if (subArticleContents != null) {
+
             subTitle = subArticleContents.text();
+            subTitle = subTitle.replaceAll("https?://\\S+|www\\.\\S+", "");
+
             /* 글자 100자 출력 */
             int maxLength = 100;
             if (subTitle.length() > maxLength) {
@@ -290,13 +357,13 @@ public class NewsServiceImpl implements NewsService {
             }
         }
 
-
         List<String> contentsList = extractContents(doc); // 뉴스 본문 추출
 
         // ResponseNewsDto 객체 생성 및 반환
         return ResponseNewsDto.builder()
                 .imgUrl(imgList)
                 .imgContentList(imgContentList)
+                .cleanUpList(cleanUpList) // 태그 지운 이미지 포함 본문 리스트
                 .companyLogo(companyLogo) // 언론사 로고
                 .contentsList(contentsList) // 줄바꿈 포함한 뉴스
                 .company(company) // 언론사
@@ -392,6 +459,7 @@ public class NewsServiceImpl implements NewsService {
             articleContent.select("div").forEach(Element::remove);
             articleContent.select("div").forEach(Element::remove);
             contents = articleContent.html();
+
         }
 
 
@@ -400,7 +468,7 @@ public class NewsServiceImpl implements NewsService {
 
         List<String> contentsList = new ArrayList<>();
         for (String paragraph : cleanedContentsList) {
-            String cleanContents = paragraph.replaceAll("<br>|<br>\\n|<!-- r_start //--><!-- r_end //-->|<!-- r_start //-->|<!-- r_end //-->|\\n|<b>|<\\b>|<!-- MobileAdNew center -->|<!--article_split-->|<blockquote style=\"float:inherit; overflow:hidden; height:auto; margin:20px 0; padding:19px 29px; border:1px solid #e5e5e5; background:#f7f7f7; color:#222;font-size: 15px; line-height: 22px; border-radius: 10px\">|</blockquote>|", "");
+            String cleanContents = paragraph.replaceAll(cleanPattern, "");
             contentsList.add(cleanContents);
         }
 
@@ -420,4 +488,3 @@ public class NewsServiceImpl implements NewsService {
         return s == null;
     }
 }
-
