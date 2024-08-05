@@ -60,13 +60,13 @@ public class NewsServiceImpl implements NewsService {
     private List<String> USER_AGENTS;
 
 
-
     private String getRandomUserAgent() {
         Random rand = new Random();
         String agent = USER_AGENTS.get(rand.nextInt(USER_AGENTS.size()));
         log.info("[news] agent : {}", agent);
         return agent;
     }
+
     private static final int TIMEOUT = 10000; // 10초
     private static final int RETRY_COUNT = 3; // 재시도 횟수
 
@@ -94,6 +94,7 @@ public class NewsServiceImpl implements NewsService {
     public List<ResponseNewsDto> fetchAllNewsArticles(String search) throws IOException {
         return fetchNewsArticles(search);
     }
+
     @Override
     public List<ResponseNewsDto> fetchNewsArticles(String search) throws IOException {
         List<ResponseNewsDto> articles = new ArrayList<>();
@@ -117,45 +118,44 @@ public class NewsServiceImpl implements NewsService {
 
             }
             Elements links = doc.select("div.info_group a.info");
-                boolean validArticleFound = false;
+            boolean validArticleFound = false;
 
-                for (Element link : links) {
-                    String articleUrl = link.attr("href");
-                    if (articleUrl.contains("sports") || articleUrl.contains("entertain")) {
-                        continue; // "sports" 또는 "entertain"이 포함된 URL은 건너뜀
-                    }
-
-                    if (!articleUrl.contains("n.news")) {
-                        continue; // "n.news" 형태의 URL이 아닌 경우 건너뜀
-                    }
-
-                    newsCategoryUrl.add(articleUrl); // Url을 리스트에 추가
-
-                    ResponseNewsDto article = fetchNewsArticleDetails(articleUrl, oid);
-                    if (article != null) {
-                        articles.add(article);
-                        validArticleFound = true;
-                        break; // 유효한 기사를 찾으면 루프 종료
-                    }
-
+            for (Element link : links) {
+                String articleUrl = link.attr("href");
+                if (articleUrl.contains("sports") || articleUrl.contains("entertain")) {
+                    continue; // "sports" 또는 "entertain"이 포함된 URL은 건너뜀
                 }
 
-                if (!validArticleFound) {
-                    System.err.println("해당 언론사에서 추출할 수 있는 기사가 없습니다 :" + oid);
+                if (!articleUrl.contains("n.news")) {
+                    continue; // "n.news" 형태의 URL이 아닌 경우 건너뜀
                 }
 
-                try {
-                    TimeUnit.SECONDS.sleep(3); // 다음 요청 전에 대기
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new IOException("Interrupted during sleep", e);
+                newsCategoryUrl.add(articleUrl); // Url을 리스트에 추가
+
+                ResponseNewsDto article = fetchNewsArticleDetails(articleUrl, oid);
+                if (article != null) {
+                    articles.add(article);
+                    validArticleFound = true;
+                    break; // 유효한 기사를 찾으면 루프 종료
                 }
+
             }
+
+            if (!validArticleFound) {
+                System.err.println("해당 언론사에서 추출할 수 있는 기사가 없습니다 :" + oid);
+            }
+
+            try {
+                TimeUnit.SECONDS.sleep(3); // 다음 요청 전에 대기
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException("Interrupted during sleep", e);
+            }
+        }
 
 
         return articles;
     }
-
 
 
     public List<RecommendNewsDto> getRecommendedArticles(List<ResponseNewsDto> allArticles) {
@@ -181,7 +181,7 @@ public class NewsServiceImpl implements NewsService {
         return recommendedArticles;
     }
 
-    public List<ResponseNewsDto> getNewsByCategory(Integer sid, String search) throws IOException{
+    public List<ResponseNewsDto> getNewsByCategory(Integer sid, String search) throws IOException {
         List<ResponseNewsDto> categoryArticle = new ArrayList<>();
         List<ResponseNewsDto> articles = fetchNewsArticles(search);
 
@@ -242,14 +242,12 @@ public class NewsServiceImpl implements NewsService {
         }
 
         // 기사 이미지 반환
-        //String imgContent = "";
         Elements elements = doc.select("img._LAZY_LOADING._LAZY_LOADING_INIT_HIDE");
 
         if (!elements.isEmpty()) {
             for (Element img : elements) {
                 String imgUrl = img.attr("src");
-                String imgContent = img.attr("alt");
-                //imgContent = doc.select("#dic_area > span.end_photo_org > em").text();
+                String imgContent = doc.select("#dic_area > span.end_photo_org > em").text();
 
 
                 if (imgUrl.isEmpty()) {
@@ -280,13 +278,13 @@ public class NewsServiceImpl implements NewsService {
             articleContent.select("strong").remove();
             articleContent.select("div").forEach(Element::remove);
 
-            // <span> 태그를 imgContentMapping의 내용으로 대체
+            // <span> 태그 이미지 url 대체
             List<Element> spanElements = articleContent.select("span");
             for (int i = 0; i < Math.min(spanElements.size(), imgList.size()); i++) {
                 Element span = spanElements.get(i);
                 String imgUrl = imgList.get(i);
-                String imgContent = imgContentList.get(i);
-                span.text(imgUrl + "\n" + imgContent);
+                //String imgContent = imgContentList.get(i);
+                span.text(imgUrl);
             }
 
             contents = articleContent.html();  // 변경된 내용을 contents 변수에 저장
@@ -300,8 +298,19 @@ public class NewsServiceImpl implements NewsService {
                 cleanUpList.add(cleanContents);
             }
 
+            String removeObject = ".*기자.*|\\S+@\\S+\\.\\S+";
 
+            Iterator<String> iterator = cleanUpList.iterator();
+            while (iterator.hasNext()) {
+                String tmp = iterator.next();
+                if (tmp.matches(removeObject) || tmp.trim().isEmpty() || tmp.contains("@")) {
+                    iterator.remove();
+                }
+            }
         }
+
+
+
 
 
         // 발행일자
