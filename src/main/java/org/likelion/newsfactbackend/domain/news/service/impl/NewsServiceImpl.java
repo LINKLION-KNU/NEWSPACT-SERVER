@@ -141,7 +141,7 @@ public class NewsServiceImpl implements NewsService {
                 }
 
                 if (!validArticleFound) {
-                    System.err.println(OIDS + "언론사에 해당하는 기사가 없습니다.: " + oid);
+                    System.err.println("해당 언론사에서 추출할 수 있는 기사가 없습니다 :" + oid);
                 }
 
                 try {
