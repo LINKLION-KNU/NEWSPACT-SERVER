@@ -34,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -54,19 +55,19 @@ public class NewsServiceImpl implements NewsService {
 
     @Value("${news.category.sids}")
     private List<String> SIDS;
+    private AtomicInteger userAgentIndex = new AtomicInteger(0); // 0부터 시작
 
     private static final String BASE_URL = "https://search.naver.com/search.naver?where=news&query={search}&sm=tab_opt&sort=1&photo=0&field=0&pd=0&ds=&de=&docid=&related=0&mynews=1&office_type=1&office_section_code=3&news_office_checked={oid}&nso=so%3Add%2Cp%3Aall&is_sug_officeid=0&office_category=0&service_area=0";
     @Value("${user.agent}")
     private List<String> USER_AGENTS;
-
-
-
-    private String getRandomUserAgent() {
-        Random rand = new Random();
-        String agent = USER_AGENTS.get(rand.nextInt(USER_AGENTS.size()));
+    private String getSequentialUserAgent() {
+        int index = userAgentIndex.getAndUpdate(i -> (i + 1) % USER_AGENTS.size());
+        String agent = USER_AGENTS.get(index);
         log.info("[news] agent : {}", agent);
         return agent;
     }
+
+
     private static final int TIMEOUT = 10000; // 10초
     private static final int RETRY_COUNT = 3; // 재시도 횟수
 
@@ -105,7 +106,7 @@ public class NewsServiceImpl implements NewsService {
             for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
                 try {
                     doc = Jsoup.connect(url)
-                            .header("User-Agent", getRandomUserAgent())
+                            .header("User-Agent", getSequentialUserAgent())
                             .header("Accept-Language", "en-US,en;q=0.5")
                             .header("Referer", "https://www.naver.com/")
                             .timeout(TIMEOUT)
@@ -234,7 +235,7 @@ public class NewsServiceImpl implements NewsService {
         String publishDate = "";  // 발행일자
         String category = ""; // 카테고리
         String subTitle = ""; // 기사 요약 내용 (100자)
-        List<String> imgContentList;
+
 
         category = doc.select("#contents > div.media_end_categorize > a > em").text();
         title = doc.select(".media_end_head_headline").text();
@@ -358,7 +359,7 @@ public class NewsServiceImpl implements NewsService {
         for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
             try {
                 doc = Jsoup.connect(url)
-                        .header("User-Agent", getRandomUserAgent())
+                        .header("User-Agent", getSequentialUserAgent())
                         .header("Accept-Language", "en-US,en;q=0.5")
                         .header("Referer", "https://www.naver.com/")
                         .timeout(TIMEOUT)
