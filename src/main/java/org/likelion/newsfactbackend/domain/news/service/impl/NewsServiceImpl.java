@@ -64,6 +64,8 @@ public class NewsServiceImpl implements NewsService {
     private String getSequentialUserAgent() {
         int index = userAgentIndex.getAndUpdate(i -> (i + 1) % USER_AGENTS.size());
         String agent = USER_AGENTS.get(index);
+        return agent;
+    }
 
   
     private static final int TIMEOUT = 10000; // 10초
