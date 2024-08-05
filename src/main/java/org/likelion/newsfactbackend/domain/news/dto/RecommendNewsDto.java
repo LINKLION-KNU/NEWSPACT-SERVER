@@ -12,5 +12,4 @@ public class RecommendNewsDto {
     private String title;
     private String thumbnailUrl;
     private String newsUrl;
-
 }

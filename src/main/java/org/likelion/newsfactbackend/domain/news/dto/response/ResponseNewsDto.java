@@ -28,6 +28,8 @@ public class ResponseNewsDto {
     private List<String> contentsList; // 줄바꿈 뉴스 리스트
     private String category;
     private String thumbnailUrl = "/images/default_thumbnail.jpg";
+    private String contents;
+    private List<String> cleanUpList;
 
     public ResponseNewsDto(String companyLogo, String company, List<String> imgUrl, String title, String subTitle, String thumbnailUrl, String publishDate, String newsUrl) {
         this.companyLogo = companyLogo;

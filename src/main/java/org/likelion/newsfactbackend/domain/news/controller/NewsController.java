@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.likelion.newsfactbackend.domain.news.dto.RecommendNewsDto;
 import org.likelion.newsfactbackend.domain.news.dto.request.PageRequestNewsDto;
+import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsAnalysisDto;
 import org.likelion.newsfactbackend.domain.news.dto.response.ResponseNewsDto;
 import org.likelion.newsfactbackend.domain.news.exception.ErrorCode;
 import org.likelion.newsfactbackend.domain.news.exception.NewsException;
 import org.likelion.newsfactbackend.domain.news.service.NewsService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/news")
 @RequiredArgsConstructor
+
 public class NewsController {
 
     private final NewsService newsService;
@@ -36,17 +39,22 @@ public class NewsController {
             throw new NewsException(ErrorCode.EMPTY_SIZE);
         }
 
-        Page<ResponseNewsDto> responseNewsDtoPage = newsService.searchNews(newsRequestDto);
-        List<ResponseNewsDto> content = responseNewsDtoPage.getContent();
+        try {
+            Page<ResponseNewsDto> responseNewsDtoPage = newsService.searchNews(newsRequestDto);
+            List<ResponseNewsDto> content = responseNewsDtoPage.getContent();
 
-        for (ResponseNewsDto news : content) {
-            if (news.isTitleEmpty()) {
-                news.titleDefault(keyword);
-                log.warn("{} title 값이 없습니다.", news);
+            for (ResponseNewsDto news : content) {
+                if (news.isTitleEmpty()) {
+                    news.titleDefault(keyword);
+                    log.warn("{} title 값이 없습니다.", news);
+                }
+                news.validateFields();
             }
-            news.validateFields();
+            return ResponseEntity.status(HttpStatus.OK).body(responseNewsDtoPage);
+        } catch (IOException e) {
+            log.error("서버 오류: {}", e.getMessage());
+            throw new NewsException(ErrorCode.SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(responseNewsDtoPage);
     }
 
     /*https://newspect.co.kr/api/v1/news-details?url=${url}*/
@@ -83,7 +91,11 @@ public class NewsController {
     @GetMapping("/search/recommend")
     public List<RecommendNewsDto> recommendNews(@RequestParam String keyword) throws IOException {
         List<ResponseNewsDto> allArticles = newsService.fetchAllNewsArticles(keyword);
+        if (isNull(keyword)) {
+            throw new NewsException(ErrorCode.EMPTY_KEYWORD);
+        }
         return newsService.getRecommendedArticles(allArticles);
+
     }
 
     @Operation(summary = "카테고리별 뉴스 기사를 반환합니다.")

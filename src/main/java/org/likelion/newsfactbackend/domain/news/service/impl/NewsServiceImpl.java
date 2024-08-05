@@ -22,10 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -54,6 +51,9 @@ public class NewsServiceImpl implements NewsService {
 
     @Value("${news.category.sids}")
     private List<String> SIDS;
+
+    @Value("${clean.pattern}")
+    private String cleanPattern;
 
     private static final String BASE_URL = "https://search.naver.com/search.naver?where=news&query={search}&sm=tab_opt&sort=1&photo=0&field=0&pd=0&ds=&de=&docid=&related=0&mynews=1&office_type=1&office_section_code=3&news_office_checked={oid}&nso=so%3Add%2Cp%3Aall&is_sug_officeid=0&office_category=0&service_area=0";
     @Value("${user.agent}")
@@ -102,67 +102,62 @@ public class NewsServiceImpl implements NewsService {
         for (String oid : OIDS) {
             String url = BASE_URL.replace("{search}", search).replace("{oid}", oid);
             Document doc = null;
-            for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
-                try {
-                    doc = Jsoup.connect(url)
-                            .header("User-Agent", getRandomUserAgent())
-                            .header("Accept-Language", "en-US,en;q=0.5")
-                            .header("Referer", "https://www.naver.com/")
-                            .timeout(TIMEOUT)
-                            .get();
-                    break; // 성공 시 루프 종료
-                } catch (IOException e) {
-                    System.err.println("Attempt " + attempt + " failed for URL: " + url + " - " + e.getMessage());
-                    if (attempt == RETRY_COUNT) {
-                        throw e; // 최대 재시도 횟수에 도달하면 예외를 던짐
-                    }
-                    try {
-                        TimeUnit.SECONDS.sleep(3); // 재시도 전 대기
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        throw new IOException("Interrupted during retry delay", ie);
-                    }
-                }
-            }
-
-            Elements links = doc.select("div.info_group a.info");
-            boolean validArticleFound = false;
-
-            for (Element link : links) {
-                String articleUrl = link.attr("href");
-                if (articleUrl.contains("sports") || articleUrl.contains("entertain")) {
-                    continue; // "sports" 또는 "entertain"이 포함된 URL은 건너뜀
-                }
-
-                if (!articleUrl.contains("n.news")) {
-                    continue; // "n.news" 형태의 URL이 아닌 경우 건너뜀
-                }
-
-                newsCategoryUrl.add(articleUrl); // Url을 리스트에 추가
-
-                ResponseNewsDto article = fetchNewsArticleDetails(articleUrl, oid);
-                if (article != null) {
-                    articles.add(article);
-                    validArticleFound = true;
-                    break; // 유효한 기사를 찾으면 루프 종료
-                }
-
-            }
-
-            if (!validArticleFound) {
-                System.err.println("No valid article found for OID: " + oid);
-            }
-
             try {
-                TimeUnit.SECONDS.sleep(3); // 다음 요청 전에 대기
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new IOException("Interrupted during sleep", e);
+                doc = Jsoup.connect(url)
+                        .header("User-Agent", getRandomUserAgent())
+                        .header("Accept-Language", "en-US,en;q=0.5")
+                        .header("Referer", "https://www.naver.com/")
+                        .timeout(TIMEOUT)
+                        .get();
+            } catch (IOException e) {
+                String errorMessage = "검색 중 해당 URL에서 오류가 발생합니다. " + url + " - " + e.getMessage();
+                System.err.println(errorMessage);
+                e.printStackTrace();
+                return (List<ResponseNewsDto>) ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+
             }
-        }
+            Elements links = doc.select("div.info_group a.info");
+                boolean validArticleFound = false;
+
+                for (Element link : links) {
+                    String articleUrl = link.attr("href");
+                    if (articleUrl.contains("sports") || articleUrl.contains("entertain")) {
+                        continue; // "sports" 또는 "entertain"이 포함된 URL은 건너뜀
+                    }
+
+                    if (!articleUrl.contains("n.news")) {
+                        continue; // "n.news" 형태의 URL이 아닌 경우 건너뜀
+                    }
+
+                    newsCategoryUrl.add(articleUrl); // Url을 리스트에 추가
+
+                    ResponseNewsDto article = fetchNewsArticleDetails(articleUrl, oid);
+                    if (article != null) {
+                        articles.add(article);
+                        validArticleFound = true;
+                        break; // 유효한 기사를 찾으면 루프 종료
+                    }
+
+                }
+
+                if (!validArticleFound) {
+                    System.err.println(OIDS + "언론사에 해당하는 기사가 없습니다.: " + oid);
+                }
+
+                try {
+                    TimeUnit.SECONDS.sleep(3); // 다음 요청 전에 대기
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Interrupted during sleep", e);
+                }
+            }
+
 
         return articles;
     }
+
+
+
     public List<RecommendNewsDto> getRecommendedArticles(List<ResponseNewsDto> allArticles) {
         List<RecommendNewsDto> recommendedArticles = new ArrayList<>();
         Random random = new Random();
@@ -230,46 +225,83 @@ public class NewsServiceImpl implements NewsService {
         String thumbnailUrl = "";// 썸네일 url
         List<String> imgList = new ArrayList<>();
         List<String> imgContentList = new ArrayList<>();
-
+        Map<String, String> imgContentMapping = new HashMap<>();
         String publishDate = "";  // 발행일자
         String category = ""; // 카테고리
         String subTitle = ""; // 기사 요약 내용 (100자)
-        List<String> imgContentList;
 
         category = doc.select("#contents > div.media_end_categorize > a > em").text();
+        category = category.replace(" ", ", ");
+
         title = doc.select(".media_end_head_headline").text();
 
+        // 썸네일 이미지
+        Element imgElement = doc.selectFirst("#img1");
+        if (imgElement != null) {
+            thumbnailUrl = imgElement.absUrl("data-src");
+        }
 
-
-    // 기사 이미지 반환
+        // 기사 이미지 반환
+        //String imgContent = "";
         Elements elements = doc.select("img._LAZY_LOADING._LAZY_LOADING_INIT_HIDE");
 
         if (!elements.isEmpty()) {
             for (Element img : elements) {
                 String imgUrl = img.attr("src");
                 String imgContent = img.attr("alt");
+                //imgContent = doc.select("#dic_area > span.end_photo_org > em").text();
+
 
                 if (imgUrl.isEmpty()) {
                     imgUrl = img.attr("data-src");
-
                 }
+
                 if (!(imgUrl.isEmpty() || imgUrl.isBlank())) {
-                    if (!(imgUrl.contains("office_logo") || imgUrl.contains("banner_AI"))) {
+                    if (!(imgUrl.contains("office_logo") || imgUrl.contains("banner_AI") || imgUrl.contains("type=nf112_112"))) {
                         imgList.add(imgUrl);
                         imgContentList.add(imgContent);
                     }
                 }
             }
+
+            // imgList와 imgContentList의 매핑
+            for (int i = 0; i < Math.min(imgList.size(), imgContentList.size()); i++) {
+                String imgUrl = imgList.get(i);
+                String imgContent = imgContentList.get(i);
+                imgContentMapping.put(imgUrl, imgContent);
+            }
         }
-        
+
+        List<String> cleanUpList = new ArrayList<>();
+        // articleContent가 존재하는지 확인
+        Element articleContent = doc.selectFirst(".go_trans._article_content");
+        if (articleContent != null) {
+            contents = articleContent.html();
+            articleContent.select("strong").remove();
+            articleContent.select("div").forEach(Element::remove);
+
+            // <span> 태그를 imgContentMapping의 내용으로 대체
+            List<Element> spanElements = articleContent.select("span");
+            for (int i = 0; i < Math.min(spanElements.size(), imgList.size()); i++) {
+                Element span = spanElements.get(i);
+                String imgUrl = imgList.get(i);
+                String imgContent = imgContentList.get(i);
+                span.text(imgUrl + "\n" + imgContent);
+            }
+
+            contents = articleContent.html();  // 변경된 내용을 contents 변수에 저장
+
+            // 내용을 청소하여 리스트로 분할
+            List<String> contentlist = Arrays.asList(contents.split("\\n<br>\\n<br>\\n"));
+            List<String> contentsList = new ArrayList<>();
+            for (String paragraph : contentlist) {
+                String cleanContents = paragraph.replaceAll(cleanPattern, "");
+                contentsList.add(cleanContents);
+                cleanUpList.add(cleanContents);
+            }
 
 
-
-    // 썸네일 이미지
-       Element imgElement = doc.selectFirst("#img1");
-       if (imgElement != null) {
-           thumbnailUrl = imgElement.absUrl("data-src");
-       }
+        }
 
 
         // 발행일자
@@ -281,7 +313,10 @@ public class NewsServiceImpl implements NewsService {
 
         Element subArticleContents = doc.selectFirst(".go_trans._article_content");
         if (subArticleContents != null) {
+
             subTitle = subArticleContents.text();
+            subTitle = subTitle.replaceAll("https?://\\S+|www\\.\\S+", "");
+
             /* 글자 100자 출력 */
             int maxLength = 100;
             if (subTitle.length() > maxLength) {
@@ -289,13 +324,13 @@ public class NewsServiceImpl implements NewsService {
             }
         }
 
-
         List<String> contentsList = extractContents(doc); // 뉴스 본문 추출
 
         // ResponseNewsDto 객체 생성 및 반환
         return ResponseNewsDto.builder()
                 .imgUrl(imgList)
                 .imgContentList(imgContentList)
+                .cleanUpList(cleanUpList) // 태그 지운 이미지 포함 본문 리스트
                 .companyLogo(companyLogo) // 언론사 로고
                 .contentsList(contentsList) // 줄바꿈 포함한 뉴스
                 .company(company) // 언론사
@@ -391,6 +426,7 @@ public class NewsServiceImpl implements NewsService {
             articleContent.select("div").forEach(Element::remove);
             articleContent.select("div").forEach(Element::remove);
             contents = articleContent.html();
+
         }
 
 
@@ -399,7 +435,7 @@ public class NewsServiceImpl implements NewsService {
 
         List<String> contentsList = new ArrayList<>();
         for (String paragraph : cleanedContentsList) {
-            String cleanContents = paragraph.replaceAll("<br>|<br>\\n|<!-- r_start //--><!-- r_end //-->|<!-- r_start //-->|<!-- r_end //-->|\\n|<b>|<\\b>|<!-- MobileAdNew center -->|<!--article_split-->|<blockquote style=\"float:inherit; overflow:hidden; height:auto; margin:20px 0; padding:19px 29px; border:1px solid #e5e5e5; background:#f7f7f7; color:#222;font-size: 15px; line-height: 22px; border-radius: 10px\">|</blockquote>|", "");
+            String cleanContents = paragraph.replaceAll(cleanPattern, "");
             contentsList.add(cleanContents);
         }
 
@@ -419,4 +455,3 @@ public class NewsServiceImpl implements NewsService {
         return s == null;
     }
 }
-

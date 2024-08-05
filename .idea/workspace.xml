@@ -5,18 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c38e48fe-ffe1-41c0-af4f-65f1d01fe6de" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/kakaologin.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/controller/NewsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/controller/NewsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/request/RequestNewsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/request/RequestNewsDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/RecommendNewsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/RecommendNewsDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/response/ResponseNewsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/dto/response/ResponseNewsDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/NewsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/NewsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/exception/ErrorCode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/impl/NewsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/news/service/impl/NewsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/scraps/controller/ScrapsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/scraps/controller/ScrapsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/scraps/domain/Scraps.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/domain/scraps/domain/Scraps.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/domain/enums/loginType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/domain/enums/LoginType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/security/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/security/SecurityConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/likelion/newsfactbackend/global/security/SecurityConfiguration.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +22,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -47,24 +43,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "Spring Boot.NewsFactBackendApplication.executor": "Run",
-    "git-widget-placeholder": "develop",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;Spring Boot.NewsFactBackendApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/resources" />
@@ -100,10 +97,23 @@
       <workItem from="1720843175991" duration="1589000" />
       <workItem from="1720852617719" duration="22000" />
       <workItem from="1721395600114" duration="8153000" />
+      <workItem from="1722829010487" duration="35000" />
+      <workItem from="1722829438083" duration="4774000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
