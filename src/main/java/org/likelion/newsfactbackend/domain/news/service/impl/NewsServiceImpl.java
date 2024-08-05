@@ -31,6 +31,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +52,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Value("${news.category.sids}")
     private List<String> SIDS;
+    private AtomicInteger userAgentIndex = new AtomicInteger(0); // 0부터 시작
 
     @Value("${clean.pattern}")
     private String cleanPattern;
@@ -59,14 +61,11 @@ public class NewsServiceImpl implements NewsService {
     @Value("${user.agent}")
     private List<String> USER_AGENTS;
 
+    private String getSequentialUserAgent() {
+        int index = userAgentIndex.getAndUpdate(i -> (i + 1) % USER_AGENTS.size());
+        String agent = USER_AGENTS.get(index);
 
-    private String getRandomUserAgent() {
-        Random rand = new Random();
-        String agent = USER_AGENTS.get(rand.nextInt(USER_AGENTS.size()));
-        log.info("[news] agent : {}", agent);
-        return agent;
-    }
-
+  
     private static final int TIMEOUT = 10000; // 10초
     private static final int RETRY_COUNT = 3; // 재시도 횟수
 
@@ -103,9 +102,33 @@ public class NewsServiceImpl implements NewsService {
         for (String oid : OIDS) {
             String url = BASE_URL.replace("{search}", search).replace("{oid}", oid);
             Document doc = null;
+
+            for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
+                try {
+                    doc = Jsoup.connect(url)
+                            .header("User-Agent", getSequentialUserAgent())
+                            .header("Accept-Language", "en-US,en;q=0.5")
+                            .header("Referer", "https://www.naver.com/")
+                            .timeout(TIMEOUT)
+                            .get();
+                    break; // 성공 시 루프 종료
+                } catch (IOException e) {
+                    System.err.println("Attempt " + attempt + " failed for URL: " + url + " - " + e.getMessage());
+                    if (attempt == RETRY_COUNT) {
+                        throw e; // 최대 재시도 횟수에 도달하면 예외를 던짐
+                    }
+                    try {
+                        TimeUnit.SECONDS.sleep(3); // 재시도 전 대기
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        throw new IOException("Interrupted during retry delay", ie);
+                    }
+                }
+            }
+
             try {
                 doc = Jsoup.connect(url)
-                        .header("User-Agent", getRandomUserAgent())
+                        .header("User-Agent", getSequentialUserAgent())
                         .header("Accept-Language", "en-US,en;q=0.5")
                         .header("Referer", "https://www.naver.com/")
                         .timeout(TIMEOUT)
@@ -115,6 +138,7 @@ public class NewsServiceImpl implements NewsService {
                 System.err.println(errorMessage);
                 e.printStackTrace();
                 return (List<ResponseNewsDto>) ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+
 
             }
             Elements links = doc.select("div.info_group a.info");
@@ -402,7 +426,7 @@ public class NewsServiceImpl implements NewsService {
         for (int attempt = 1; attempt <= RETRY_COUNT; attempt++) {
             try {
                 doc = Jsoup.connect(url)
-                        .header("User-Agent", getRandomUserAgent())
+                        .header("User-Agent", getSequentialUserAgent())
                         .header("Accept-Language", "en-US,en;q=0.5")
                         .header("Referer", "https://www.naver.com/")
                         .timeout(TIMEOUT)
