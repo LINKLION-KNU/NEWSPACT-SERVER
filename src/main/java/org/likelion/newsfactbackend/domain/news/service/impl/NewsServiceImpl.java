@@ -61,7 +61,7 @@ public class NewsServiceImpl implements NewsService {
     @Value("${user.agent}")
     private List<String> USER_AGENTS;
 
-    private String getSequentialUserAgent() {
+    private String getSequentialUserAgent() { // USER AGENT 변경
         int index = userAgentIndex.getAndUpdate(i -> (i + 1) % USER_AGENTS.size());
         String agent = USER_AGENTS.get(index);
         return agent;
