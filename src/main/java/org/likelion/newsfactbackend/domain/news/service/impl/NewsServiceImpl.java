@@ -271,10 +271,17 @@ public class NewsServiceImpl implements NewsService {
         Elements elements = doc.select("img._LAZY_LOADING._LAZY_LOADING_INIT_HIDE");
 
         if (!elements.isEmpty()) {
-            for (Element img : elements) {
-                String imgUrl = img.attr("src");
-                String imgContent = doc.select("#dic_area > span.end_photo_org > em").text();
+            // 모든 해당 요소를 선택
+            //Elements imgContentElements = doc.select("#dic_area > span.end_photo_org > em");
 
+            for (int i = 0; i < elements.size(); i++) {
+                Element img = elements.get(i);
+                String imgUrl = img.attr("src");
+
+//                String imgContent = doc.select("#dic_area > span.end_photo_org > emee").html();
+//                if (i < imgContentElements.size()) {
+//                    imgContent = imgContentElements.get(i).text();
+//                }
 
                 if (imgUrl.isEmpty()) {
                     imgUrl = img.attr("data-src");
@@ -283,7 +290,7 @@ public class NewsServiceImpl implements NewsService {
                 if (!(imgUrl.isEmpty() || imgUrl.isBlank())) {
                     if (!(imgUrl.contains("office_logo") || imgUrl.contains("banner_AI") || imgUrl.contains("type=nf112_112"))) {
                         imgList.add(imgUrl);
-                        imgContentList.add(imgContent);
+                        //imgContentList.add(imgContent);
                     }
                 }
             }
@@ -295,6 +302,23 @@ public class NewsServiceImpl implements NewsService {
                 imgContentMapping.put(imgUrl, imgContent);
             }
         }
+        /* imgContentList method
+
+        if (imgContentList.size() > 1) {
+            imgContentList = new ArrayList<>(imgContentList.subList(0, 1)); // 0번째 항목만 남김
+        }
+        if (!imgContentList.isEmpty()) {
+            String firstImgContent = imgContentList.get(0); // 0번째 항목 가져오기
+            String[] splitContent = firstImgContent.split("<br>"); // 예외처리
+
+
+            imgContentList.clear(); // 기존 내용을 삭제 및 초기화
+            for (String part : splitContent) {
+                imgContentList.add(part.trim()); // 공백 제거 후 리스트에 추가
+            }
+        }
+        */
+
 
         List<String> cleanUpList = new ArrayList<>();
         // articleContent가 존재하는지 확인
@@ -309,6 +333,7 @@ public class NewsServiceImpl implements NewsService {
             for (int i = 0; i < Math.min(spanElements.size(), imgList.size()); i++) {
                 Element span = spanElements.get(i);
                 String imgUrl = imgList.get(i);
+
                 //String imgContent = imgContentList.get(i);
                 span.text(imgUrl);
             }
